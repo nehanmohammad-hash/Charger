@@ -1,0 +1,884 @@
+
+\documentclass[journal,12pt,twocolumn]{IEEEtran}
+
+\usepackage{setspace}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\singlespacing
+\usepackage{siunitx}
+\usepackage[cmex10]{amsmath}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage{amsthm}
+\usepackage{mathrsfs}
+\usepackage{txfonts}
+\usepackage{stfloats}
+\usepackage{cite}
+\usepackage{cases}
+\usepackage[caption=false]{subfig}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
+\usepackage{circuitikz}
+
+% Reduce avoidable line- and page-breaking warnings
+\emergencystretch=2em
+\raggedbottom
+
+\let\vec\mathbf
+
+\DeclareMathOperator*{\Res}{Res}
+
+\renewcommand\thesection{\arabic{section}}
+\renewcommand\thesubsection{\thesection.\arabic{subsection}}
+\renewcommand\thesubsubsection{\thesubsection.\arabic{subsubsection}}
+
+\renewcommand\thesectiondis{\arabic{section}}
+\renewcommand\thesubsectiondis{\thesectiondis.\arabic{subsection}}
+\renewcommand\thesubsubsectiondis{\thesubsectiondis.\arabic{subsubsection}}
+
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+\lstset{
+    language=Python,
+    frame=single,
+    breaklines=true,
+    columns=fullflexible
+}
+
+% Imaginary-unit notation and solution heading
+\newcommand{\jj}{\mathrm{j}}
+\providecommand{\solution}{\par\noindent\textit{Solution.}\ }
+
+\begin{document}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{problem}{Problem}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{example}{Example}[section]
+\newtheorem{definition}{Definition}[section]
+
+\newcommand{\BEQA}{\begin{eqnarray}}
+\newcommand{\EEQA}{\end{eqnarray}}
+\newcommand{\define}{\stackrel{\triangle}{=}}
+\newcommand{\myvec}[1]{\ensuremath{\begin{pmatrix}#1\end{pmatrix}}}
+\newcommand{\mydet}[1]{\ensuremath{\begin{vmatrix}#1\end{vmatrix}}}
+
+\bibliographystyle{IEEEtran}
+
+\providecommand{\nCr}[2]{\,^{#1}C_{#2}}
+\providecommand{\nPr}[2]{\,^{#1}P_{#2}}
+\providecommand{\mbf}{\mathbf}
+\providecommand{\pr}[1]{\ensuremath{\Pr\left(#1\right)}}
+\providecommand{\qfunc}[1]{\ensuremath{Q\left(#1\right)}}
+\providecommand{\sbrak}[1]{\ensuremath{{}\left[#1\right]}}
+\providecommand{\lsbrak}[1]{\ensuremath{{}\left[#1\right.}}
+\providecommand{\rsbrak}[1]{\ensuremath{{}\left.#1\right]}}
+\providecommand{\brak}[1]{\ensuremath{\left(#1\right)}}
+\providecommand{\lbrak}[1]{\ensuremath{\left(#1\right.}}
+\providecommand{\rbrak}[1]{\ensuremath{\left.#1\right)}}
+\providecommand{\cbrak}[1]{\ensuremath{\left\{#1\right\}}}
+\providecommand{\lcbrak}[1]{\ensuremath{\left\{#1\right.}}
+\providecommand{\rcbrak}[1]{\ensuremath{\left.#1\right\}}}
+
+\theoremstyle{remark}
+\newtheorem{rem}{Remark}
+
+\newcommand{\sgn}{\mathop{\mathrm{sgn}}}
+\newcommand{\rect}{\mathop{\mathrm{rect}}}
+\newcommand{\sinc}{\mathop{\mathrm{sinc}}}
+
+\providecommand{\abs}[1]{\left\vert#1\right\vert}
+\providecommand{\res}[1]{\Res\displaylimits_{#1}}
+\providecommand{\norm}[1]{\lVert#1\rVert}
+\providecommand{\mtx}[1]{\mathbf{#1}}
+\providecommand{\mean}[1]{E\left[ #1 \right]}
+\providecommand{\fourier}{\overset{\mathcal{F}}{\rightleftharpoons}}
+\providecommand{\ztrans}{\overset{\mathcal{Z}}{\rightleftharpoons}}
+\providecommand{\system}[1]{\overset{\mathcal{#1}}{\longleftrightarrow}}
+
+\providecommand{\dec}[2]{\ensuremath{\overset{#1}{\underset{#2}{\gtrless}}}}
+
+\numberwithin{equation}{section}
+
+\makeatletter
+\@addtoreset{figure}{problem}
+\makeatother
+
+\let\StandardTheFigure\thefigure
+\renewcommand{\thefigure}{\theproblem}
+
+\def\putbox#1#2#3{
+    \makebox[0in][l]{
+        \makebox[#1][l]{}
+        \raisebox{\baselineskip}[0in][0in]{
+            \raisebox{#2}[0in][0in]{#3}
+        }
+    }
+}
+\def\rightbox#1{\makebox[0in][r]{#1}}
+\def\centbox#1{\makebox[0in]{#1}}
+\def\topbox#1{\raisebox{-\baselineskip}[0in][0in]{#1}}
+\def\midbox#1{\raisebox{-0.5\baselineskip}[0in][0in]{#1}}
+
+\vspace{3cm}
+
+\title{Fourier Series}
+\author{Nehan Mohammad, Anvidha Reddy}
+
+\maketitle
+\tableofcontents
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+
+\bigskip
+
+\begin{abstract}
+This manual provides a simple introduction to Fourier Series
+and its application through filter in a basic charger circuit.
+\end{abstract}
+
+%------------------------------------------------
+\section{Periodic Function}
+%------------------------------------------------
+
+Let
+
+\begin{align}
+    x(t) &= A_0\abs{\sin\brak{2\pi f_0t}}
+    \label{eq:10-orig-diff-def}
+\end{align}
+
+\begin{enumerate}[
+    label=\thesection.\arabic*,
+    ref=\thesection.\theenumi
+]
+
+% Q1.1
+\item Plot $x(t)$.
+
+\solution The plot of $x(t)$ is shown in Fig.~\ref{fig:xt}.
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=\columnwidth]{codes/q1_1_plot.png}
+    \caption{Plot of $x(t)=A_0\abs{\sin(2\pi f_0t)}$.}
+    \label{fig:xt}
+\end{figure}
+
+% Q1.2
+\item Show that $x(t)$ is periodic and find its period.
+
+\solution Note that,
+
+\begin{align}
+    x\brak{t+\frac{1}{2f_0}}
+    &= A_0\abs{
+    \sin\brak{2\pi f_0\brak{t+\frac{1}{2f_0}}}
+    }\\
+    &= A_0\abs{\sin\brak{2\pi f_0t+\pi}}\\
+    &= A_0\abs{-\sin\brak{2\pi f_0t}}\\
+    &= A_0\abs{\sin\brak{2\pi f_0t}}\\
+    &= x(t).
+\end{align}
+
+Hence, $x(t)$ is periodic with fundamental period
+
+\begin{align}
+    \boxed{T_0=\frac{1}{2f_0}}.
+\end{align}
+
+\end{enumerate}
+
+%------------------------------------------------
+\section{Fourier Series}
+%------------------------------------------------
+
+Consider $A_0=12$ and $f_0=50$ for all numerical calculations.
+
+\begin{enumerate}[
+    label=\thesection.\arabic*,
+    ref=\thesection.\theenumi
+]
+
+% Q2.1
+\item If
+
+\begin{align}
+    x(t)
+    &= \sum_{k=-\infty}^{\infty}
+    c_ke^{\jj2\pi kf_0t}
+    \label{eq:one-Z-complex}
+\end{align}
+
+show that
+
+\begin{align}
+    c_k
+    &= f_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    x(t)e^{-\jj2\pi kf_0t}\,dt.
+    \label{eq:one-Z}
+\end{align}
+
+\solution For some $n\in\mathbb{Z}$, multiplying
+both sides of \eqref{eq:one-Z-complex} by
+$e^{-\jj2\pi nf_0t}$ gives
+
+\begin{align}
+    x(t)e^{-\jj2\pi nf_0t}
+    =
+    \sum_{k=-\infty}^{\infty}
+    c_ke^{\jj2\pi(k-n)f_0t}.
+\end{align}
+
+Now, integrating both sides over the interval
+$\left[-\frac{1}{2f_0},\frac{1}{2f_0}\right]$,
+
+\begin{align}
+    &\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    x(t)e^{-\jj2\pi nf_0t}\,dt
+    \nonumber\\
+    &=
+    \sum_{k=-\infty}^{\infty}
+    c_k
+    \int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    e^{\jj2\pi(k-n)f_0t}\,dt.
+\end{align}
+
+The integral on the right can be evaluated using the
+orthogonality property of complex exponentials:
+
+\begin{align}
+    &\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    e^{\jj2\pi(k-n)f_0t}\,dt
+    \nonumber\\
+    &=
+    \begin{cases}
+        \dfrac{1}{f_0}, & k=n,\\[4pt]
+        0, & k\neq n.
+    \end{cases}
+\end{align}
+
+Note that the integration interval has length $1/f_0$.
+Although the fundamental period of the given signal
+$x(t)=A_0|\sin(2\pi f_0t)|$ is $1/(2f_0)$, the chosen
+Fourier basis $e^{\jj2\pi kf_0t}$ has period $1/f_0$. Thus, the integration interval covers two fundamental periods of the signal and one period of the Fourier basis.
+
+Consequently, all terms in the summation vanish except
+the term for which $k=n$. Therefore,
+
+\begin{align}
+    &\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    x(t)e^{-\jj2\pi nf_0t}\,dt
+    \nonumber\\
+    &=\frac{c_n}{f_0}.
+\end{align}
+
+Hence,
+
+\begin{align}
+    \boxed{
+    c_n=f_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    x(t)e^{-\jj2\pi nf_0t}\,dt
+    }.
+\end{align}
+
+% Q2.2
+
+\item Find $c_k$ for \eqref{eq:10-orig-diff-def}.
+
+\solution Using \eqref{eq:one-Z},
+
+\begin{align}
+    c_n
+    &=f_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    A_0\abs{\sin(2\pi f_0t)}
+    e^{-\jj2\pi nf_0t}\,dt.
+\end{align}
+
+Using Euler's identity,
+
+\begin{align}
+    e^{-\jj\theta}=\cos\theta-\jj\sin\theta,
+\end{align}
+
+we obtain
+
+\begin{align}
+    c_n
+    &=f_0A_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    \abs{\sin(2\pi f_0t)}
+    \cos(2\pi nf_0t)\,dt
+    \nonumber\\
+    &\quad-\jj f_0A_0
+    \int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    \abs{\sin(2\pi f_0t)}
+    \sin(2\pi nf_0t)\,dt.
+\end{align}
+
+Since $x(t)$ is even and the sine term is odd, the
+imaginary part vanishes. Thus,
+
+\begin{align}
+    c_n
+    &=2f_0A_0\int_0^{\frac{1}{2f_0}}
+    \sin(2\pi f_0t)\cos(2\pi nf_0t)\,dt.
+\end{align}
+
+Using the identity
+
+\begin{align}
+    2\sin A\cos B=\sin(A+B)+\sin(A-B),
+\end{align}
+
+we get
+
+\begin{align}
+    c_n
+    &=f_0A_0\int_0^{\frac{1}{2f_0}}
+    \sin(2\pi(n+1)f_0t)\,dt
+    \nonumber\\
+    &\quad+
+    f_0A_0\int_0^{\frac{1}{2f_0}}
+    \sin(2\pi(1-n)f_0t)\,dt.
+\end{align}
+
+For $n\neq\pm1$, evaluating the integrals gives
+
+\begin{align}
+    c_n
+    &=\frac{A_0}{2\pi}
+    \left[
+    \frac{1-(-1)^{n+1}}{n+1}
+    +
+    \frac{1-(-1)^{1-n}}{1-n}
+    \right]
+    \nonumber\\
+    &=\frac{A_0(1+(-1)^n)}{\pi(1-n^2)}.
+\end{align}
+
+For $n=\pm1$, direct evaluation of the original integral
+gives $c_n=0$.
+
+Therefore,
+
+\begin{align}
+    \boxed{
+    c_n=
+    \begin{cases}
+        \dfrac{2A_0}{\pi(1-n^2)}, & n\text{ even},\\[6pt]
+        0, & n\text{ odd}.
+    \end{cases}
+    }
+    \label{eq:ck-xt}
+\end{align}
+
+Here, $n=0$ is included in the even case, giving
+$c_0=2A_0/\pi$.
+
+% Q2.3
+\item Verify \eqref{eq:one-Z-complex} using Python.
+
+\solution The Python code \texttt{codes/2\_3.py} verifies
+\eqref{eq:one-Z-complex} by comparing the original signal
+with its Fourier-series reconstruction, as shown in
+Fig.~\ref{fig:ver-complex}.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\columnwidth]{codes/2_3.png}
+    \caption{Verification of the complex Fourier series.}
+    \label{fig:ver-complex}
+\end{figure}
+
+% Q2.4
+\item Show that
+
+\begin{align}
+    x(t)
+    &=a_0+\sum_{k=1}^{\infty}
+    \left[
+    a_k\cos(2\pi kf_0t)
+    +b_k\sin(2\pi kf_0t)
+    \right]
+    \label{eq:one-Z-real}
+\end{align}
+
+and obtain the formulae for $a_k$ and $b_k$.
+
+\solution From \eqref{eq:one-Z-complex},
+
+\begin{align}
+    x(t)
+    &=\sum_{k=-\infty}^{\infty}
+    c_ke^{\jj2\pi kf_0t}\\
+    &=c_0+\sum_{k=1}^{\infty}
+    \left[
+    c_ke^{\jj2\pi kf_0t}
+    +c_{-k}e^{-\jj2\pi kf_0t}
+    \right].
+\end{align}
+
+Using Euler's identities,
+
+\begin{align}
+    e^{\jj\theta}&=\cos\theta+\jj\sin\theta,\\
+    e^{-\jj\theta}&=\cos\theta-\jj\sin\theta,
+\end{align}
+
+we obtain
+
+\begin{align}
+    x(t)
+    &=c_0+\sum_{k=1}^{\infty}
+    \Big[
+    (c_k+c_{-k})\cos(2\pi kf_0t)
+    \nonumber\\
+    &\qquad+
+    \jj(c_k-c_{-k})\sin(2\pi kf_0t)
+    \Big].
+\end{align}
+
+Comparing this with \eqref{eq:one-Z-real}, we get
+
+\begin{align}
+    a_k&=
+    \begin{cases}
+        c_0, & k=0,\\
+        c_k+c_{-k}, & k>0,
+    \end{cases}
+    \label{eq:ak}
+\end{align}
+
+and
+
+\begin{align}
+    b_k&=\jj(c_k-c_{-k}),\qquad k>0.
+    \label{eq:bk}
+\end{align}
+
+Using the coefficient formula \eqref{eq:one-Z}, the
+corresponding integral expressions are
+
+\begin{align}
+    a_0
+    &=f_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    x(t)\,dt,
+    \nonumber\\
+    a_k
+    &=2f_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    x(t)\cos(2\pi kf_0t)\,dt,
+    \quad k>0,
+    \nonumber\\
+    b_k
+    &=2f_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    x(t)\sin(2\pi kf_0t)\,dt,
+    \quad k>0.
+\end{align}
+
+% Q2.5
+\item Find $a_k$ and $b_k$ for
+\eqref{eq:10-orig-diff-def}.
+
+\solution Since $x(t)$ is an even function,
+
+\begin{align}
+    x(-t)=x(t).
+\end{align}
+
+From the complex Fourier-series representation,
+
+\begin{align}
+    x(-t)
+    &=\sum_{k=-\infty}^{\infty}
+    c_ke^{-\jj2\pi kf_0t}\\
+    &=\sum_{k=-\infty}^{\infty}
+    c_{-k}e^{\jj2\pi kf_0t}.
+\end{align}
+
+Comparing this with
+
+\begin{align}
+    x(t)=\sum_{k=-\infty}^{\infty}
+    c_ke^{\jj2\pi kf_0t},
+\end{align}
+
+we obtain
+
+\begin{align}
+    c_k=c_{-k}.
+\end{align}
+
+Therefore, from \eqref{eq:ak} and \eqref{eq:bk},
+
+\begin{align}
+    a_k
+    &=
+    \begin{cases}
+        \dfrac{2A_0}{\pi}, & k=0,\\[6pt]
+        \dfrac{4A_0}{\pi(1-k^2)}, &
+        k>0,\ k\text{ even},\\[6pt]
+        0, & k>0,\ k\text{ odd},
+    \end{cases}
+    \label{eq:ak-xt}\\
+    b_k&=0,\qquad k>0.
+    \label{eq:bk-xt}
+\end{align}
+
+For $A_0=12$, these become
+
+\begin{align}
+    a_0&=\frac{24}{\pi},\\
+    a_k&=
+    \begin{cases}
+        \dfrac{48}{\pi(1-k^2)},&
+        k>0,\ k\text{ even},\\[6pt]
+        0,&k>0,\ k\text{ odd},
+    \end{cases}\\
+    b_k&=0.
+\end{align}
+
+% Q2.6
+\item Verify \eqref{eq:one-Z-real} using Python.
+
+\solution The Python code \texttt{codes/2\_6.py} verifies
+\eqref{eq:one-Z-real} by comparing the original signal
+with its real Fourier-series reconstruction, as shown in
+Fig.~\ref{fig:ver-real}.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\columnwidth]{codes/2_6.png}
+    \caption{Verification of the real Fourier series.}
+    \label{fig:ver-real}
+\end{figure}
+
+\end{enumerate}
+\section{Fourier Transform}
+
+We use the Fourier-transform convention
+\begin{align}
+    G(f)=\int_{-\infty}^{\infty}g(t)e^{-\jj2\pi ft}\,dt,
+    \label{eq:ft-definition}
+\end{align}
+with inverse transform
+\begin{align}
+    g(t)=\int_{-\infty}^{\infty}G(f)e^{\jj2\pi ft}\,df.
+\end{align}
+
+\begin{enumerate}[label=\thesection.\arabic*,ref=\thesection.\theenumi]
+
+% Q3.1
+\item The unit impulse satisfies
+\begin{align}
+    \delta(t)&=0,\quad t\neq 0,\\
+    \int_{-\infty}^{\infty}\delta(t)\,dt&=1.
+\end{align}
+
+\solution The Dirac delta is zero everywhere except at the origin, but its total integral is unity. More generally, it has the sifting property
+\begin{align}
+    \int_{-\infty}^{\infty}g(t)\delta(t-t_0)\,dt=g(t_0).
+\end{align}
+This property allows an impulse to select the value of a function at its location.
+
+% Q3.2
+\item State the Fourier-transform pair for $g(t)$.
+
+\solution By definition, the Fourier transform of $g(t)$ is
+\begin{align}
+    G(f)=\int_{-\infty}^{\infty}g(t)e^{-\jj2\pi ft}\,dt.
+\end{align}
+The corresponding inverse transform is
+\begin{align}
+    g(t)=\int_{-\infty}^{\infty}G(f)e^{\jj2\pi ft}\,df.
+\end{align}
+Hence, we write $g(t)\system{F}G(f)$.
+
+% Q3.3
+\item Show that
+\begin{align}
+    g(t-t_0)&\system{F}G(f)e^{-\jj2\pi ft_0}.
+\end{align}
+
+\solution Let $y(t)=g(t-t_0)$. Its Fourier transform is
+\begin{align}
+    Y(f)&=\int_{-\infty}^{\infty}g(t-t_0)e^{-\jj2\pi ft}\,dt.
+\end{align}
+Using the substitution $u=t-t_0$, so that $t=u+t_0$ and $dt=du$,
+\begin{align}
+    Y(f)&=\int_{-\infty}^{\infty}g(u)e^{-\jj2\pi f(u+t_0)}\,du\\
+    &=e^{-\jj2\pi ft_0}\int_{-\infty}^{\infty}g(u)e^{-\jj2\pi fu}\,du\\
+    &=G(f)e^{-\jj2\pi ft_0}.
+\end{align}
+Therefore,
+\begin{align}
+    \boxed{g(t-t_0)\system{F}G(f)e^{-\jj2\pi ft_0}}.
+\end{align}
+
+% Q3.4
+\item Show that
+\begin{align}
+    G(t)&\system{F}g(-f).
+\end{align}
+
+\solution From the inverse Fourier-transform relation,
+\begin{align}
+    g(-f)=\int_{-\infty}^{\infty}G(\nu)e^{-\jj2\pi\nu f}\,d\nu.
+\end{align}
+This is precisely the Fourier transform of the function $G(t)$, evaluated at frequency $f$. Thus, by the duality property,
+\begin{align}
+    \boxed{G(t)\system{F}g(-f)}.
+\end{align}
+
+% Q3.5
+\item Find the Fourier transform of $\delta(t)$.
+
+\solution Using the definition,
+\begin{align}
+    \mathcal{F}\{\delta(t)\}
+    &=\int_{-\infty}^{\infty}\delta(t)e^{-\jj2\pi ft}\,dt.
+\end{align}
+By the sifting property, the integrand is evaluated at $t=0$:
+\begin{align}
+    \boxed{\delta(t)\system{F}1}.
+\end{align}
+
+% Q3.6
+\item Find the Fourier transform of $e^{-\jj2\pi f_0t}$.
+
+\solution The standard frequency-shift impulse pair is
+\begin{align}
+    e^{\jj2\pi f_0t}&\system{F}\delta(f-f_0).
+\end{align}
+Replacing $f_0$ by $-f_0$ gives
+\begin{align}
+    \boxed{e^{-\jj2\pi f_0t}\system{F}\delta(f+f_0)}.
+\end{align}
+
+% Q3.7
+\item Find the Fourier transform of $\cos(2\pi f_0t)$.
+
+\solution Using Euler's identity,
+\begin{align}
+    \cos(2\pi f_0t)=\frac{1}{2}\left(e^{\jj2\pi f_0t}+e^{-\jj2\pi f_0t}\right).
+\end{align}
+By linearity and the exponential transform pairs,
+\begin{align}
+    \boxed{\cos(2\pi f_0t)\system{F}
+    \frac{1}{2}\left[\delta(f-f_0)+\delta(f+f_0)\right]}.
+\end{align}
+
+% Q3.8
+\item Find the Fourier transform of $x(t)$ and plot it. Verify using Python.
+
+\solution The signal is periodic with fundamental frequency $2f_0$. Its complex Fourier-series representation can therefore be written as
+\begin{align}
+    x(t)=\sum_{m=-\infty}^{\infty}d_m e^{\jj2\pi(2mf_0)t},
+\end{align}
+where, from the coefficients obtained in Section 2,
+\begin{align}
+    d_m=c_{2m}=\frac{2A_0}{\pi(1-4m^2)}.
+\end{align}
+The Fourier transform of a periodic signal is an impulse train in the frequency domain. Hence,
+\begin{align}
+    X(f)&=\sum_{m=-\infty}^{\infty}d_m\delta(f-2mf_0)\\
+    &=\boxed{\sum_{m=-\infty}^{\infty}
+    \frac{2A_0}{\pi(1-4m^2)}\delta(f-2mf_0)}.
+\end{align}
+For $A_0=12$ and $f_0=50$ Hz,
+\begin{align}
+    X(f)=\sum_{m=-\infty}^{\infty}
+    \frac{24}{\pi(1-4m^2)}\delta(f-100m).
+\end{align}
+Python code plots the first few spectral lines and compares the analytical Fourier-series reconstruction with the original signal.
+
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=\columnwidth]{codes/3_8.png}
+    \caption{Comparision with the fourier recreation.}
+    \label{fig2}
+\end{figure}
+
+
+
+% Q3.9
+\item Show that $\rect{t}\system{F}\sinc{f}$. Verify using Python.
+
+\solution Using the normalized definitions
+\begin{align}
+    \rect{t}&=\begin{cases}1,&|t|<\frac{1}{2},\\0,&|t|>\frac{1}{2},\end{cases}\\
+    \sinc{f}&=\frac{\sin(\pi f)}{\pi f},\qquad \sinc{0}=1,
+\end{align}
+the Fourier transform is
+\begin{align}
+    R(f)&=\int_{-\infty}^{\infty}\rect{t}e^{-\jj2\pi ft}\,dt\\
+    &=\int_{-1/2}^{1/2}e^{-\jj2\pi ft}\,dt\\
+    &=\left[\frac{e^{-\jj2\pi ft}}{-\jj2\pi f}\right]_{-1/2}^{1/2}\\
+    &=\frac{e^{-\jj\pi f}-e^{\jj\pi f}}{-\jj2\pi f}\\
+    &=\frac{\sin(\pi f)}{\pi f}.
+\end{align}
+Therefore,
+\begin{align}
+    \boxed{\rect{t}\system{F}\sinc{f}}.
+\end{align}
+The following code numerically evaluates the transform and compares it with the analytical sinc function.
+
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=\columnwidth]{codes/3_9.png}
+    \caption{Comparision with the fourier transform.}
+    \label{fig3}
+\end{figure}
+
+% Q3.10
+\item Find the Fourier transform of $\sinc{t}$. Verify using Python.
+
+\solution By the duality property, since
+\begin{align}
+    \rect{t}&\system{F}\sinc{f},
+\end{align}
+we obtain
+\begin{align}
+    \sinc{t}&\system{F}\rect{-f}.
+\end{align}
+The rectangular function is even, so $\rect{-f}=\rect{f}$. Hence,
+\begin{align}
+    \boxed{\sinc{t}\system{F}\rect{f}}.
+\end{align}
+The following code numerically evaluates the transform over a finite time interval. Increasing the integration range and sampling density improves the approximation.
+At the discontinuities $f=\pm\frac{1}{2}$, the Fourier-transform value is conventionally taken as the midpoint value $1/2$.
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=\columnwidth]{codes/3_10.png}
+    \caption{Comparision with the fourier transform.}
+    \label{fig}
+\end{figure}
+
+\end{enumerate}
+
+\section{Filter}
+\begin{enumerate}[label=\thesection.\arabic*
+,ref=\thesection.\theenumi]
+\item Find $H(f)$ which transforms $x(t)$ to DC 5V.
+\item Find $h(t)$.
+\item Verify your result using  through convolution.
+\end{enumerate}
+\section{Filter Design}
+\begin{enumerate}[label=\thesection.\arabic*
+,ref=\thesection.\theenumi]
+\item Design a Butterworth filter for $H(f)$.
+\item Design a Chebyschev filter for $H(f)$.
+\item Design a circuit for your Butterworth filter.
+\item Design a circuit for your Chebyschev filter.
+\end{enumerate}
+
+
+
+%------------------------------------------------
+\section{Practical Implementation of the Charger Circuit}
+%------------------------------------------------
+
+The charger converts AC mains into regulated DC through a transformer,
+bridge rectifier, smoothing capacitor and voltage regulator. The
+following calculations use the available practical readings. Current
+and power measurements will be added later.
+
+%------------------------------------------------
+\section{Transformer}
+%------------------------------------------------
+
+The mains supply is $220\,\mathrm{V}$ RMS at $50\,\mathrm{Hz}$.
+Its peak voltage is
+\begin{align}
+    V_{p,\mathrm{pk}}&=\sqrt{2}(220)
+    \approx311.1\,\mathrm{V}.
+\end{align}
+
+The measured secondary voltage is $V_s=10.53\,\mathrm{V}$ RMS.
+Hence, the transformer turns ratio and secondary peak voltage are
+\begin{align}
+    \frac{N_p}{N_s}&=\frac{220}{10.53}
+    \approx20.9:1,\\
+    V_{s,\mathrm{pk}}&=\sqrt{2}(10.53)
+    \approx14.89\,\mathrm{V}.
+\end{align}
+The transformer steps down the voltage and provides isolation; the
+secondary frequency remains $50\,\mathrm{Hz}$.
+
+%------------------------------------------------
+\section{Bridge Rectifier}
+%------------------------------------------------
+
+A bridge rectifier uses two conducting diodes in each half-cycle,
+giving a full-wave rectified output. Taking each diode drop as
+$V_D=0.7\,\mathrm{V}$, the peak output is
+\begin{align}
+    V_{o,\mathrm{pk}}&=14.89-2(0.7)
+    \approx13.49\,\mathrm{V}.
+\end{align}
+
+For a full-wave rectified sinusoid,
+\begin{align}
+    V_{o,\mathrm{avg}}&=\frac{2V_{o,\mathrm{pk}}}{\pi}
+    \approx8.59\,\mathrm{V},\\
+    V_{o,\mathrm{rms}}&=\frac{V_{o,\mathrm{pk}}}{\sqrt{2}}
+    \approx9.54\,\mathrm{V}.
+\end{align}
+The ripple frequency is twice the mains frequency:
+\begin{align}
+    f_r=2(50)=100\,\mathrm{Hz},\qquad
+    T_r=\frac{1}{f_r}=10\,\mathrm{ms}.
+\end{align}
+The output is pulsating DC, so a capacitor is used to reduce its
+ripple.
+
+%------------------------------------------------
+\section{Smoothing Capacitor}
+%------------------------------------------------
+
+The $2200\,\mu\mathrm{F}$ capacitor charges near the rectified peaks
+and discharges through the load between them, reducing voltage ripple.
+Its current-voltage relation is
+\begin{align}
+    i_C(t)=C\frac{dv_C(t)}{dt}.
+\end{align}
+
+For a resistive load $R_L$, the discharge voltage is
+\begin{align}
+    C\frac{dv_C}{dt}+\frac{v_C}{R_L}=0,
+    \qquad
+    v_C(t)=V_{\max}e^{-\frac{t-t_0}{R_LC}}.
+\end{align}
+
+Here, $C=2.2\times10^{-3}\,\mathrm{F}$,
+$V_{\max}\approx13.49\,\mathrm{V}$ and $f_r=100\,\mathrm{Hz}$.
+For small ripple and approximately constant load current $I_L$,
+\begin{align}
+    V_{r(pp)}&\approx\frac{I_L}{f_rC}
+    =4.545I_L\ \mathrm{V},
+\end{align}
+where $I_L$ is in amperes. The approximate DC output is
+\begin{align}
+    V_{DC}&\approx V_{\max}-\frac{V_{r(pp)}}{2}\\
+    &\approx13.49-2.273I_L\ \mathrm{V}.
+\end{align}
+
+These estimates depend on the load current, which has not yet been
+measured. The capacitor reduces ripple but does not regulate the
+output; a regulator or buck converter is required for a stable USB
+voltage. Experimental current and power values will be added when
+measuring equipment is available.
+
+
+\end{document}
+
