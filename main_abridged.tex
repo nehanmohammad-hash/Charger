@@ -1,0 +1,1509 @@
+\documentclass[journal,12pt,twocolumn]{IEEEtran}
+
+\usepackage{setspace}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{float}
+\singlespacing
+\usepackage{siunitx}
+\usepackage[cmex10]{amsmath}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage[margin=0.78in,columnsep=0.25in]{geometry}
+\usepackage{xurl}
+\usepackage{amsthm}
+\usepackage{mathrsfs}
+\usepackage{txfonts}
+\usepackage{stfloats}
+\usepackage{cite}
+\usepackage{cases}
+\usepackage[caption=false]{subfig}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
+\usepackage{circuitikz}
+
+% Reduce avoidable line- and page-breaking warnings
+\emergencystretch=2em
+\raggedbottom
+
+\let\vec\mathbf
+
+\DeclareMathOperator*{\Res}{Res}
+
+\renewcommand\thesection{\arabic{section}}
+\renewcommand\thesubsection{\thesection.\arabic{subsection}}
+\renewcommand\thesubsubsection{\thesubsection.\arabic{subsubsection}}
+
+\renewcommand\thesectiondis{\arabic{section}}
+\renewcommand\thesubsectiondis{\thesectiondis.\arabic{subsection}}
+\renewcommand\thesubsubsectiondis{\thesubsectiondis.\arabic{subsubsection}}
+
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+\lstset{
+    language=Python,
+    frame=single,
+    breaklines=true,
+    columns=fullflexible
+}
+
+% Imaginary-unit notation and solution heading
+\newcommand{\jj}{\mathrm{j}}
+\providecommand{\solution}{\par\noindent\textit{Solution.}\ }
+\newcommand{\maybeimage}[1]{\IfFileExists{#1}{\includegraphics[width=\columnwidth]{#1}}{\fbox{\parbox[c][0.85in][c]{0.88\columnwidth}{\centering Figure file not included in this source package.}}}}
+
+\begin{document}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{problem}{Problem}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{example}{Example}[section]
+\newtheorem{definition}{Definition}[section]
+
+\newcommand{\BEQA}{\begin{eqnarray}}
+\newcommand{\EEQA}{\end{eqnarray}}
+\newcommand{\define}{\stackrel{\triangle}{=}}
+\newcommand{\myvec}[1]{\ensuremath{\begin{pmatrix}#1\end{pmatrix}}}
+\newcommand{\mydet}[1]{\ensuremath{\begin{vmatrix}#1\end{vmatrix}}}
+
+\bibliographystyle{IEEEtran}
+
+\providecommand{\nCr}[2]{\,^{#1}C_{#2}}
+\providecommand{\nPr}[2]{\,^{#1}P_{#2}}
+\providecommand{\mbf}{\mathbf}
+\providecommand{\pr}[1]{\ensuremath{\Pr\left(#1\right)}}
+\providecommand{\qfunc}[1]{\ensuremath{Q\left(#1\right)}}
+\providecommand{\sbrak}[1]{\ensuremath{{}\left[#1\right]}}
+\providecommand{\lsbrak}[1]{\ensuremath{{}\left[#1\right.}}
+\providecommand{\rsbrak}[1]{\ensuremath{{}\left.#1\right]}}
+\providecommand{\brak}[1]{\ensuremath{\left(#1\right)}}
+\providecommand{\lbrak}[1]{\ensuremath{\left(#1\right.}}
+\providecommand{\rbrak}[1]{\ensuremath{\left.#1\right)}}
+\providecommand{\cbrak}[1]{\ensuremath{\left\{#1\right\}}}
+\providecommand{\lcbrak}[1]{\ensuremath{\left\{#1\right.}}
+\providecommand{\rcbrak}[1]{\ensuremath{\left.#1\right\}}}
+
+\theoremstyle{remark}
+\newtheorem{rem}{Remark}
+
+\newcommand{\sgn}{\mathop{\mathrm{sgn}}}
+\newcommand{\rect}{\mathop{\mathrm{rect}}}
+\newcommand{\sinc}{\mathop{\mathrm{sinc}}}
+
+\providecommand{\abs}[1]{\left\vert#1\right\vert}
+\providecommand{\res}[1]{\Res\displaylimits_{#1}}
+\providecommand{\norm}[1]{\lVert#1\rVert}
+\providecommand{\mtx}[1]{\mathbf{#1}}
+\providecommand{\mean}[1]{E\left[ #1 \right]}
+\providecommand{\fourier}{\overset{\mathcal{F}}{\rightleftharpoons}}
+\providecommand{\ztrans}{\overset{\mathcal{Z}}{\rightleftharpoons}}
+\providecommand{\system}[1]{\overset{\mathcal{#1}}{\longleftrightarrow}}
+
+\providecommand{\dec}[2]{\ensuremath{\overset{#1}{\underset{#2}{\gtrless}}}}
+
+\numberwithin{equation}{section}
+
+\makeatletter
+\@addtoreset{figure}{problem}
+\makeatother
+
+\let\StandardTheFigure\thefigure
+\renewcommand{\thefigure}{\theproblem}
+
+\def\putbox#1#2#3{
+    \makebox[0in][l]{
+        \makebox[#1][l]{}
+        \raisebox{\baselineskip}[0in][0in]{
+            \raisebox{#2}[0in][0in]{#3}
+        }
+    }
+}
+\def\rightbox#1{\makebox[0in][r]{#1}}
+\def\centbox#1{\makebox[0in]{#1}}
+\def\topbox#1{\raisebox{-\baselineskip}[0in][0in]{#1}}
+\def\midbox#1{\raisebox{-0.5\baselineskip}[0in][0in]{#1}}
+
+\vspace{3cm}
+
+\title{Fourier Series and the Circuit Design of a 5\,V USB Charger}
+\author{Nehan Mohammad, Anvidha Reddy}
+
+\maketitle
+\tableofcontents
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+
+\bigskip
+
+\begin{abstract}
+This report develops the Fourier-series and Fourier-transform analysis of a
+full-wave rectified waveform, then connects that analysis to the practical
+stages of a 5 V charger: voltage conversion, rectification, smoothing,
+regulation, and the USB output interface. Circuit explanations are expanded
+for intuitive understanding, while numerical values are distinguished from
+reference examples and unverified assumptions.
+\end{abstract}
+
+%------------------------------------------------
+\section{Periodic Function}
+%------------------------------------------------
+
+Let
+
+\begin{align}
+    x(t) &= A_0\abs{\sin\brak{2\pi f_0t}}
+    \label{eq:10-orig-diff-def}
+\end{align}
+
+\begin{enumerate}[
+    label=\thesection.\arabic*,
+    ref=\thesection.\theenumi
+]
+
+% Q1.1
+\item Plot $x(t)$.
+
+\solution The plot of $x(t)$ is shown in Fig.~\ref{fig:xt}.
+
+\begin{figure}[!htp]
+    \centering
+    \maybeimage{codes/q1_1_plot.png}
+    \caption{Plot of $x(t)=A_0\abs{\sin(2\pi f_0t)}$.}
+    \label{fig:xt}
+\end{figure}
+
+% Q1.2
+\item Show that $x(t)$ is periodic and find its period.
+
+\solution Note that,
+
+\begin{align}
+    x\brak{t+\frac{1}{2f_0}}
+    &= A_0\abs{
+    \sin\brak{2\pi f_0\brak{t+\frac{1}{2f_0}}}
+    }\\
+    &= A_0\abs{\sin\brak{2\pi f_0t+\pi}}\\
+    &= A_0\abs{-\sin\brak{2\pi f_0t}}\\
+    &= A_0\abs{\sin\brak{2\pi f_0t}}\\
+    &= x(t).
+\end{align}
+
+Hence, $x(t)$ is periodic with fundamental period
+
+\begin{align}
+    \boxed{T_0=\frac{1}{2f_0}}.
+\end{align}
+
+\end{enumerate}
+
+%------------------------------------------------
+\section{Fourier Series}
+%------------------------------------------------
+
+Consider $A_0=12$ and $f_0=50$ for all numerical calculations.
+
+\begin{enumerate}[
+    label=\thesection.\arabic*,
+    ref=\thesection.\theenumi
+]
+
+% Q2.1
+\item If
+
+\begin{align}
+    x(t)
+    &= \sum_{k=-\infty}^{\infty}
+    c_ke^{\jj2\pi kf_0t}
+    \label{eq:one-Z-complex}
+\end{align}
+
+show that
+
+\begin{align}
+    c_k
+    &= f_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    x(t)e^{-\jj2\pi kf_0t}\,dt.
+    \label{eq:one-Z}
+\end{align}
+
+\solution For some $n\in\mathbb{Z}$, multiplying
+both sides of \eqref{eq:one-Z-complex} by
+$e^{-\jj2\pi nf_0t}$ gives
+
+\begin{align}
+    x(t)e^{-\jj2\pi nf_0t}
+    =
+    \sum_{k=-\infty}^{\infty}
+    c_ke^{\jj2\pi(k-n)f_0t}.
+\end{align}
+
+Now, integrating both sides over the interval
+$\left[-\frac{1}{2f_0},\frac{1}{2f_0}\right]$,
+
+\begin{align}
+    &\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    x(t)e^{-\jj2\pi nf_0t}\,dt
+    \nonumber\\
+    &=
+    \sum_{k=-\infty}^{\infty}
+    c_k
+    \int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    e^{\jj2\pi(k-n)f_0t}\,dt.
+\end{align}
+
+The integral on the right can be evaluated using the
+orthogonality property of complex exponentials:
+
+\begin{align}
+    &\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    e^{\jj2\pi(k-n)f_0t}\,dt
+    \nonumber\\
+    &=
+    \begin{cases}
+        \dfrac{1}{f_0}, & k=n,\\[4pt]
+        0, & k\neq n.
+    \end{cases}
+\end{align}
+
+Note that the integration interval has length $1/f_0$.
+Although the fundamental period of the given signal
+$x(t)=A_0|\sin(2\pi f_0t)|$ is $1/(2f_0)$, the chosen
+Fourier basis $e^{\jj2\pi kf_0t}$ has period $1/f_0$. Thus, the integration interval covers two fundamental periods of the signal and one period of the Fourier basis.
+
+Consequently, all terms in the summation vanish except
+the term for which $k=n$. Therefore,
+
+\begin{align}
+    &\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    x(t)e^{-\jj2\pi nf_0t}\,dt
+    \nonumber\\
+    &=\frac{c_n}{f_0}.
+\end{align}
+
+Hence,
+
+\begin{align}
+    \boxed{
+    c_n=f_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    x(t)e^{-\jj2\pi nf_0t}\,dt
+    }.
+\end{align}
+
+% Q2.2
+
+\item Find $c_k$ for \eqref{eq:10-orig-diff-def}.
+
+\solution Using \eqref{eq:one-Z},
+
+\begin{align}
+    c_n
+    &=f_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    A_0\abs{\sin(2\pi f_0t)}
+    e^{-\jj2\pi nf_0t}\,dt.
+\end{align}
+
+Using Euler's identity,
+
+\begin{align}
+    e^{-\jj\theta}=\cos\theta-\jj\sin\theta,
+\end{align}
+
+we obtain
+
+\begin{align}
+    c_n
+    &=f_0A_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    \abs{\sin(2\pi f_0t)}
+    \cos(2\pi nf_0t)\,dt
+    \nonumber\\
+    &\quad-\jj f_0A_0
+    \int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    \abs{\sin(2\pi f_0t)}
+    \sin(2\pi nf_0t)\,dt.
+\end{align}
+
+Since $x(t)$ is even and the sine term is odd, the
+imaginary part vanishes. Thus,
+
+\begin{align}
+    c_n
+    &=2f_0A_0\int_0^{\frac{1}{2f_0}}
+    \sin(2\pi f_0t)\cos(2\pi nf_0t)\,dt.
+\end{align}
+
+Using the identity
+
+\begin{align}
+    2\sin A\cos B=\sin(A+B)+\sin(A-B),
+\end{align}
+
+we get
+
+\begin{align}
+    c_n
+    &=f_0A_0\int_0^{\frac{1}{2f_0}}
+    \sin(2\pi(n+1)f_0t)\,dt
+    \nonumber\\
+    &\quad+
+    f_0A_0\int_0^{\frac{1}{2f_0}}
+    \sin(2\pi(1-n)f_0t)\,dt.
+\end{align}
+
+For $n\neq\pm1$, evaluating the integrals gives
+
+\begin{align}
+    c_n
+    &=\frac{A_0}{2\pi}
+    \left[
+    \frac{1-(-1)^{n+1}}{n+1}
+    +
+    \frac{1-(-1)^{1-n}}{1-n}
+    \right]
+    \nonumber\\
+    &=\frac{A_0(1+(-1)^n)}{\pi(1-n^2)}.
+\end{align}
+
+For $n=\pm1$, direct evaluation of the original integral
+gives $c_n=0$.
+
+Therefore,
+
+\begin{align}
+    \boxed{
+    c_n=
+    \begin{cases}
+        \dfrac{2A_0}{\pi(1-n^2)}, & n\text{ even},\\[6pt]
+        0, & n\text{ odd}.
+    \end{cases}
+    }
+    \label{eq:ck-xt}
+\end{align}
+
+Here, $n=0$ is included in the even case, giving
+$c_0=2A_0/\pi$.
+
+% Q2.3
+\item Verify \eqref{eq:one-Z-complex} using Python.
+
+\solution The Python code \texttt{codes/2\_3.py} verifies
+\eqref{eq:one-Z-complex} by comparing the original signal
+with its Fourier-series reconstruction, as shown in
+Fig.~\ref{fig:ver-complex}.
+
+\begin{figure}[!ht]
+    \centering
+    \maybeimage{codes/2_3.png}
+    \caption{Verification of the complex Fourier series.}
+    \label{fig:ver-complex}
+\end{figure}
+
+% Q2.4
+\item Show that
+
+\begin{align}
+    x(t)
+    &=a_0+\sum_{k=1}^{\infty}
+    \left[
+    a_k\cos(2\pi kf_0t)
+    +b_k\sin(2\pi kf_0t)
+    \right]
+    \label{eq:one-Z-real}
+\end{align}
+
+and obtain the formulae for $a_k$ and $b_k$.
+
+\solution From \eqref{eq:one-Z-complex},
+
+\begin{align}
+    x(t)
+    &=\sum_{k=-\infty}^{\infty}
+    c_ke^{\jj2\pi kf_0t}\\
+    &=c_0+\sum_{k=1}^{\infty}
+    \left[
+    c_ke^{\jj2\pi kf_0t}
+    +c_{-k}e^{-\jj2\pi kf_0t}
+    \right].
+\end{align}
+
+Using Euler's identities,
+
+\begin{align}
+    e^{\jj\theta}&=\cos\theta+\jj\sin\theta,\\
+    e^{-\jj\theta}&=\cos\theta-\jj\sin\theta,
+\end{align}
+
+we obtain
+
+\begin{align}
+    x(t)
+    &=c_0+\sum_{k=1}^{\infty}
+    \Big[
+    (c_k+c_{-k})\cos(2\pi kf_0t)
+    \nonumber\\
+    &\qquad+
+    \jj(c_k-c_{-k})\sin(2\pi kf_0t)
+    \Big].
+\end{align}
+
+Comparing this with \eqref{eq:one-Z-real}, we get
+
+\begin{align}
+    a_k&=
+    \begin{cases}
+        c_0, & k=0,\\
+        c_k+c_{-k}, & k>0,
+    \end{cases}
+    \label{eq:ak}
+\end{align}
+
+and
+
+\begin{align}
+    b_k&=\jj(c_k-c_{-k}),\qquad k>0.
+    \label{eq:bk}
+\end{align}
+
+Using the coefficient formula \eqref{eq:one-Z}, the
+corresponding integral expressions are
+
+\begin{align}
+    a_0
+    &=f_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    x(t)\,dt,
+    \nonumber\\
+    a_k
+    &=2f_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    x(t)\cos(2\pi kf_0t)\,dt,
+    \quad k>0,
+    \nonumber\\
+    b_k
+    &=2f_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+    x(t)\sin(2\pi kf_0t)\,dt,
+    \quad k>0.
+\end{align}
+
+% Q2.5
+\item Find $a_k$ and $b_k$ for
+\eqref{eq:10-orig-diff-def}.
+
+\solution Since $x(t)$ is an even function,
+
+\begin{align}
+    x(-t)=x(t).
+\end{align}
+
+From the complex Fourier-series representation,
+
+\begin{align}
+    x(-t)
+    &=\sum_{k=-\infty}^{\infty}
+    c_ke^{-\jj2\pi kf_0t}\\
+    &=\sum_{k=-\infty}^{\infty}
+    c_{-k}e^{\jj2\pi kf_0t}.
+\end{align}
+
+Comparing this with
+
+\begin{align}
+    x(t)=\sum_{k=-\infty}^{\infty}
+    c_ke^{\jj2\pi kf_0t},
+\end{align}
+
+we obtain
+
+\begin{align}
+    c_k=c_{-k}.
+\end{align}
+
+Therefore, from \eqref{eq:ak} and \eqref{eq:bk},
+
+\begin{align}
+    a_k
+    &=
+    \begin{cases}
+        \dfrac{2A_0}{\pi}, & k=0,\\[6pt]
+        \dfrac{4A_0}{\pi(1-k^2)}, &
+        k>0,\ k\text{ even},\\[6pt]
+        0, & k>0,\ k\text{ odd},
+    \end{cases}
+    \label{eq:ak-xt}\\
+    b_k&=0,\qquad k>0.
+    \label{eq:bk-xt}
+\end{align}
+
+For $A_0=12$, these become
+
+\begin{align}
+    a_0&=\frac{24}{\pi},\\
+    a_k&=
+    \begin{cases}
+        \dfrac{48}{\pi(1-k^2)},&
+        k>0,\ k\text{ even},\\[6pt]
+        0,&k>0,\ k\text{ odd},
+    \end{cases}\\
+    b_k&=0.
+\end{align}
+
+% Q2.6
+\item Verify \eqref{eq:one-Z-real} using Python.
+
+\solution The Python code \texttt{codes/2\_6.py} verifies
+\eqref{eq:one-Z-real} by comparing the original signal
+with its real Fourier-series reconstruction, as shown in
+Fig.~\ref{fig:ver-real}.
+
+\begin{figure}[!ht]
+    \centering
+    \maybeimage{codes/2_6.png}
+    \caption{Verification of the real Fourier series.}
+    \label{fig:ver-real}
+\end{figure}
+
+\end{enumerate}
+\section{Fourier Transform}
+
+We use the Fourier-transform convention
+\begin{align}
+    G(f)=\int_{-\infty}^{\infty}g(t)e^{-\jj2\pi ft}\,dt,
+    \label{eq:ft-definition}
+\end{align}
+with inverse transform
+\begin{align}
+    g(t)=\int_{-\infty}^{\infty}G(f)e^{\jj2\pi ft}\,df.
+\end{align}
+
+\begin{enumerate}[label=\thesection.\arabic*,ref=\thesection.\theenumi]
+
+% Q3.1
+\item The unit impulse satisfies
+\begin{align}
+    \delta(t)&=0,\quad t\neq 0,\\
+    \int_{-\infty}^{\infty}\delta(t)\,dt&=1.
+\end{align}
+
+\solution The Dirac delta is zero everywhere except at the origin, but its total integral is unity. More generally, it has the sifting property
+\begin{align}
+    \int_{-\infty}^{\infty}g(t)\delta(t-t_0)\,dt=g(t_0).
+\end{align}
+This property allows an impulse to select the value of a function at its location.
+
+% Q3.2
+\item State the Fourier-transform pair for $g(t)$.
+
+\solution By definition, the Fourier transform of $g(t)$ is
+\begin{align}
+    G(f)=\int_{-\infty}^{\infty}g(t)e^{-\jj2\pi ft}\,dt.
+\end{align}
+The corresponding inverse transform is
+\begin{align}
+    g(t)=\int_{-\infty}^{\infty}G(f)e^{\jj2\pi ft}\,df.
+\end{align}
+Hence, we write $g(t)\system{F}G(f)$.
+
+% Q3.3
+\item Show that
+\begin{align}
+    g(t-t_0)&\system{F}G(f)e^{-\jj2\pi ft_0}.
+\end{align}
+
+\solution Let $y(t)=g(t-t_0)$. Its Fourier transform is
+\begin{align}
+    Y(f)&=\int_{-\infty}^{\infty}g(t-t_0)e^{-\jj2\pi ft}\,dt.
+\end{align}
+Using the substitution $u=t-t_0$, so that $t=u+t_0$ and $dt=du$,
+\begin{align}
+    Y(f)&=\int_{-\infty}^{\infty}g(u)e^{-\jj2\pi f(u+t_0)}\,du\\
+    &=e^{-\jj2\pi ft_0}\int_{-\infty}^{\infty}g(u)e^{-\jj2\pi fu}\,du\\
+    &=G(f)e^{-\jj2\pi ft_0}.
+\end{align}
+Therefore,
+\begin{align}
+    \boxed{g(t-t_0)\system{F}G(f)e^{-\jj2\pi ft_0}}.
+\end{align}
+
+% Q3.4
+\item Show that
+\begin{align}
+    G(t)&\system{F}g(-f).
+\end{align}
+
+\solution From the inverse Fourier-transform relation,
+\begin{align}
+    g(-f)=\int_{-\infty}^{\infty}G(\nu)e^{-\jj2\pi\nu f}\,d\nu.
+\end{align}
+This is precisely the Fourier transform of the function $G(t)$, evaluated at frequency $f$. Thus, by the duality property,
+\begin{align}
+    \boxed{G(t)\system{F}g(-f)}.
+\end{align}
+
+% Q3.5
+\item Find the Fourier transform of $\delta(t)$.
+
+\solution Using the definition,
+\begin{align}
+    \mathcal{F}\{\delta(t)\}
+    &=\int_{-\infty}^{\infty}\delta(t)e^{-\jj2\pi ft}\,dt.
+\end{align}
+By the sifting property, the integrand is evaluated at $t=0$:
+\begin{align}
+    \boxed{\delta(t)\system{F}1}.
+\end{align}
+
+% Q3.6
+\item Find the Fourier transform of $e^{-\jj2\pi f_0t}$.
+
+\solution The standard frequency-shift impulse pair is
+\begin{align}
+    e^{\jj2\pi f_0t}&\system{F}\delta(f-f_0).
+\end{align}
+Replacing $f_0$ by $-f_0$ gives
+\begin{align}
+    \boxed{e^{-\jj2\pi f_0t}\system{F}\delta(f+f_0)}.
+\end{align}
+
+% Q3.7
+\item Find the Fourier transform of $\cos(2\pi f_0t)$.
+
+\solution Using Euler's identity,
+\begin{align}
+    \cos(2\pi f_0t)=\frac{1}{2}\left(e^{\jj2\pi f_0t}+e^{-\jj2\pi f_0t}\right).
+\end{align}
+By linearity and the exponential transform pairs,
+\begin{align}
+    \boxed{\cos(2\pi f_0t)\system{F}
+    \frac{1}{2}\left[\delta(f-f_0)+\delta(f+f_0)\right]}.
+\end{align}
+
+% Q3.8
+\item Find the Fourier transform of $x(t)$ and plot it. Verify using Python.
+
+\solution The signal is periodic with fundamental frequency $2f_0$. Its complex Fourier-series representation can therefore be written as
+\begin{align}
+    x(t)=\sum_{m=-\infty}^{\infty}d_m e^{\jj2\pi(2mf_0)t},
+\end{align}
+where, from the coefficients obtained in Section 2,
+\begin{align}
+    d_m=c_{2m}=\frac{2A_0}{\pi(1-4m^2)}.
+\end{align}
+The Fourier transform of a periodic signal is an impulse train in the frequency domain. Hence,
+\begin{align}
+    X(f)&=\sum_{m=-\infty}^{\infty}d_m\delta(f-2mf_0)\\
+    &=\boxed{\sum_{m=-\infty}^{\infty}
+    \frac{2A_0}{\pi(1-4m^2)}\delta(f-2mf_0)}.
+\end{align}
+For $A_0=12$ and $f_0=50$ Hz,
+\begin{align}
+    X(f)=\sum_{m=-\infty}^{\infty}
+    \frac{24}{\pi(1-4m^2)}\delta(f-100m).
+\end{align}
+Python code plots the first few spectral lines and compares the analytical Fourier-series reconstruction with the original signal.
+
+
+\begin{figure}[!htp]
+    \centering
+    \maybeimage{codes/3_8.png}
+    \caption{Comparison with the Fourier reconstruction.}
+    \label{fig2}
+\end{figure}
+
+
+
+% Q3.9
+\item Show that $\rect{t}\system{F}\sinc{f}$. Verify using Python.
+
+\solution Using the normalized definitions
+\begin{align}
+    \rect{t}&=\begin{cases}1,&|t|<\frac{1}{2},\\0,&|t|>\frac{1}{2},\end{cases}\\
+    \sinc{f}&=\frac{\sin(\pi f)}{\pi f},\qquad \sinc{0}=1,
+\end{align}
+the Fourier transform is
+\begin{align}
+    R(f)&=\int_{-\infty}^{\infty}\rect{t}e^{-\jj2\pi ft}\,dt\\
+    &=\int_{-1/2}^{1/2}e^{-\jj2\pi ft}\,dt\\
+    &=\left[\frac{e^{-\jj2\pi ft}}{-\jj2\pi f}\right]_{-1/2}^{1/2}\\
+    &=\frac{e^{-\jj\pi f}-e^{\jj\pi f}}{-\jj2\pi f}\\
+    &=\frac{\sin(\pi f)}{\pi f}.
+\end{align}
+Therefore,
+\begin{align}
+    \boxed{\rect{t}\system{F}\sinc{f}}.
+\end{align}
+The following code numerically evaluates the transform and compares it with the analytical sinc function.
+
+
+\begin{figure}[!htp]
+    \centering
+    \maybeimage{codes/3_9.png}
+    \caption{Comparison with the Fourier transform.}
+    \label{fig3}
+\end{figure}
+
+% Q3.10
+\item Find the Fourier transform of $\sinc{t}$. Verify using Python.
+
+\solution By the duality property, since
+\begin{align}
+    \rect{t}&\system{F}\sinc{f},
+\end{align}
+we obtain
+\begin{align}
+    \sinc{t}&\system{F}\rect{-f}.
+\end{align}
+The rectangular function is even, so $\rect{-f}=\rect{f}$. Hence,
+\begin{align}
+    \boxed{\sinc{t}\system{F}\rect{f}}.
+\end{align}
+The following code numerically evaluates the transform over a finite time interval. Increasing the integration range and sampling density improves the approximation.
+At the discontinuities $f=\pm\frac{1}{2}$, the Fourier-transform value is conventionally taken as the midpoint value $1/2$.
+
+\begin{figure}[H]
+    \centering
+    \maybeimage{codes/3_10.png}
+    \caption{Numerical verification of the Fourier transform of $\sinc{t}$.}
+    \label{fig:fourier-sinc-verification}
+\end{figure}
+
+\end{enumerate}
+
+\section{Filter}
+\begin{enumerate}[label=\thesection.\arabic*
+,ref=\thesection.\theenumi]
+\item Find $H(f)$ which transforms $x(t)$ to DC 5V.
+\item Find $h(t)$.
+\item Verify your result using  through convolution.
+\end{enumerate}
+\section{Filter Design}
+\begin{enumerate}[label=\thesection.\arabic*
+,ref=\thesection.\theenumi]
+\item Design a Butterworth filter for $H(f)$.
+\item Design a Chebyschev filter for $H(f)$.
+\item Design a circuit for your Butterworth filter.
+\item Design a circuit for your Chebyschev filter.
+\end{enumerate}
+
+
+
+
+%------------------------------------------------
+
+%------------------------------------------------
+% The Fourier analysis above is intentionally two-column; the charger discussion is linear.
+\onecolumn
+\section{Circuit: From AC Input to Smoothed DC}
+%------------------------------------------------
+
+\subsection*{Purpose and signal path}
+The circuit discussion follows the energy-conversion path up to the
+smoothing capacitor. The stages have different jobs: the transformer
+provides voltage reduction and isolation, the bridge rectifier makes
+the load polarity unidirectional, and the capacitor reduces the
+remaining periodic variation. The regulator and USB output are
+discussed in the following sections.
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Input stage:} a 50\,Hz AC source is the reference input.
+    \item \textbf{Voltage conversion and isolation:} a step-down
+    transformer provides a lower AC voltage and galvanic isolation.
+    \item \textbf{Rectification:} a four-diode bridge converts both
+    half-cycles into positive output pulses.
+    \item \textbf{Smoothing:} a reservoir capacitor stores energy near
+    each peak and supplies the load between peaks.
+    \item \textbf{Regulation:} a separate regulator produces a more
+    stable 5\,V rail.
+    \item \textbf{USB interface:} the port presents the correct
+    electrical and charging-identification behaviour to a device.
+\end{itemize}
+
+\subsection*{Input quantities and notation}
+The calculations below use the measured secondary voltage from the
+input-stage analysis. This is kept distinct from the separate
+12--0--12\,V transformer example in the reference circuit report.
+
+\begin{table}[!t]
+\centering
+\caption{Input-stage values used in this report}
+\label{tab:input-values}
+\small
+\begin{tabular}{|p{0.48\columnwidth}|c|c|}
+\hline
+\textbf{Quantity} & \textbf{Symbol} & \textbf{Value}\\ \hline
+Primary RMS voltage & $V_p$ & $220\,\mathrm{V}$\\ \hline
+Mains frequency & $f$ & $50\,\mathrm{Hz}$\\ \hline
+Secondary RMS voltage (measured) & $V_s$ & $10.53\,\mathrm{V}$\\ \hline
+One silicon diode drop (assumed) & $V_D$ & $0.7\,\mathrm{V}$\\ \hline
+Bridge output ripple frequency & $f_r$ & $100\,\mathrm{Hz}$\\ \hline
+Reservoir capacitor in main draft & $C$ & $2200\,\mu\mathrm{F}$\\ \hline
+\end{tabular}
+\end{table}
+
+The symbols used throughout are:
+\begin{itemize}[leftmargin=1.5em]
+    \item $V_{\mathrm{rms}}$: root-mean-square voltage;
+    \item $V_{\mathrm{pk}}$: peak voltage;
+    \item $V_{\mathrm{avg}}$: average value over a cycle;
+    \item $V_{r(pp)}$: peak-to-peak ripple voltage;
+    \item $I_L$: load current; and
+    \item $f_r$: frequency of the rectified ripple.
+\end{itemize}
+
+\subsection*{Mains waveform: RMS and peak values}
+A sinusoidal voltage is commonly specified by its RMS value because
+that value describes its equivalent heating effect in a resistive
+load. For a pure sinusoid, the peak value is larger than the RMS value
+by a factor of $\sqrt{2}$:
+\begin{equation}
+    \boxed{V_{\mathrm{pk}}=\sqrt{2}\,V_{\mathrm{rms}}.}
+    \label{eq:rms-peak}
+\end{equation}
+For the nominal input stated in the reference calculation,
+\begin{align}
+    V_{p,\mathrm{pk}}
+    &=220\sqrt{2}\\
+    &\approx 311.1\,\mathrm{V}.
+\end{align}
+This value is included to explain the notation and the transformer
+ratio; it is not an instruction to handle or measure mains voltage.
+
+\textbf{Intuition.} RMS voltage is similar to an average
+\emph{effectiveness} rating rather than the highest instantaneous
+value. A 220\,V RMS sine wave does not remain at 220\,V; it swings
+between positive and negative peaks of approximately 311\,V.
+
+\subsection*{Step-down transformer}
+A transformer transfers energy between windings through a changing
+magnetic field. In an ideal transformer, the voltage ratio follows
+the turns ratio:
+\begin{equation}
+    \boxed{\frac{V_s}{V_p}=\frac{N_s}{N_p}.}
+    \label{eq:transformer-ratio}
+\end{equation}
+Here, $N_p$ and $N_s$ denote the primary and secondary turns. Using
+the measured secondary RMS value:
+\begin{align}
+    \frac{N_p}{N_s}
+    &=\frac{V_p}{V_s}
+      =\frac{220}{10.53}\\
+    &\approx 20.9:1.
+\end{align}
+The corresponding secondary peak is
+\begin{equation}
+    V_{s,\mathrm{pk}}=\sqrt{2}(10.53)
+    \approx 14.89\,\mathrm{V}.
+    \label{eq:secondary-peak}
+\end{equation}
+
+The transformer performs two conceptually separate functions:
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Voltage conversion:} the secondary voltage is lower
+    than the primary voltage.
+    \item \textbf{Galvanic isolation:} energy is transferred
+    magnetically, without a direct conductive connection between
+    primary and secondary windings in an appropriately designed
+    isolation transformer.
+\end{itemize}
+
+\textbf{Contemporary analogy.} A transformer is like a contactless
+gearbox for AC energy: it changes the voltage/current relationship
+through magnetic coupling, much as gears trade speed for torque.
+Unlike a simple resistor divider, it can transfer useful power
+without intentionally burning the voltage difference as heat.
+
+The reference main-circuit report describes a centre-tapped
+12--0--12\,V transformer and reports an approximately 12\,V RMS
+secondary waveform, corresponding to about 18\,V peak. That is a
+different stated transformer condition from the measured
+10.53\,V RMS value used in this report. These values must not be
+combined in one calculation. The actual transformer label, winding
+connection, load condition, and measured secondary voltage must be
+confirmed before any design is finalised.
+
+\subsection*{Full-wave bridge rectifier}
+A bridge rectifier uses four diodes arranged so that the current
+through the load has the same direction during both half-cycles of
+the AC input. During one half-cycle, one diagonal pair conducts;
+during the next half-cycle, the other pair conducts. At any instant,
+the conducting path contains two forward-biased diodes.
+
+\begin{itemize}[leftmargin=1.5em]
+    \item Positive input half-cycle: the first diode pair carries
+    current through the load.
+    \item Negative input half-cycle: the second pair carries current
+    through the load in the same load direction.
+    \item Result: the negative half-cycle is flipped upward, producing
+    a full-wave rectified waveform.
+\end{itemize}
+
+\textbf{Contemporary analogy.} Think of a one-way street system:
+although the source alternates direction, the bridge routes both
+directions of travel so that traffic through the load always moves
+the same way.
+
+For a silicon bridge, a first-order estimate uses two diode drops:
+\begin{equation}
+    \boxed{V_{o,\mathrm{pk}}\approx V_{s,\mathrm{pk}}-2V_D.}
+    \label{eq:bridge-peak}
+\end{equation}
+With $V_D=0.7\,\mathrm{V}$ and the measured secondary peak:
+\begin{align}
+    V_{o,\mathrm{pk}}
+    &=14.89-2(0.7)\\
+    &\approx 13.49\,\mathrm{V}.
+\end{align}
+The ideal full-wave rectified sine has average value
+\begin{equation}
+    \boxed{V_{o,\mathrm{avg}}=\frac{2V_{o,\mathrm{pk}}}{\pi}}
+    \approx 8.59\,\mathrm{V},
+    \label{eq:rect-average}
+\end{equation}
+and RMS value
+\begin{equation}
+    \boxed{V_{o,\mathrm{rms}}=\frac{V_{o,\mathrm{pk}}}{\sqrt{2}}}
+    \approx 9.54\,\mathrm{V}.
+    \label{eq:rect-rms}
+\end{equation}
+These are idealised waveform calculations. Real diode forward
+voltage depends on current and temperature, and transformer
+regulation and winding resistance also affect the measured result.
+
+Since both input half-cycles become positive pulses, the pulse
+frequency doubles:
+\begin{equation}
+    \boxed{f_r=2f=100\,\mathrm{Hz},\qquad
+    T_r=\frac{1}{f_r}=10\,\mathrm{ms}.}
+    \label{eq:ripple-frequency}
+\end{equation}
+The bridge output is therefore \emph{pulsating DC}, not yet a steady
+5\,V supply. Its voltage falls substantially between successive
+peaks when a load is connected.
+
+\textbf{Diode selection considerations.} The reference summary
+compares the 1N4007 (nominal 1\,A average forward-current class and
+1000\,V repetitive peak reverse-voltage rating) with the 1N5408
+(3\,A average forward-current class). The correct diode or packaged
+bridge must be selected using the actual load current, surge current,
+reverse-voltage stress, temperature, and datasheet conditions.
+A high reverse-voltage rating alone does not establish suitability
+for the required current or thermal conditions.
+
+\begin{table}[!t]
+\centering
+\caption{Calculated waveform values at the bridge output}
+\label{tab:bridge-results}
+\small
+\begin{tabular}{|p{0.48\columnwidth}|c|c|}
+\hline
+\textbf{Quantity} & \textbf{Symbol} & \textbf{Value}\\ \hline
+Secondary RMS voltage & $V_s$ & $10.53\,\mathrm{V}$\\ \hline
+Secondary peak voltage & $V_{s,\mathrm{pk}}$ & $14.89\,\mathrm{V}$\\ \hline
+Bridge peak voltage & $V_{o,\mathrm{pk}}$ & $13.49\,\mathrm{V}$\\ \hline
+Bridge average voltage & $V_{o,\mathrm{avg}}$ & $8.59\,\mathrm{V}$\\ \hline
+Bridge RMS voltage & $V_{o,\mathrm{rms}}$ & $9.54\,\mathrm{V}$\\ \hline
+Ripple frequency & $f_r$ & $100\,\mathrm{Hz}$\\ \hline
+Ripple period & $T_r$ & $10\,\mathrm{ms}$\\ \hline
+\end{tabular}
+\end{table}
+
+\subsection*{Smoothing capacitor: reservoir action}
+A capacitor connected across the rectifier output acts as an energy
+reservoir. Near each rectified peak, the rectifier voltage exceeds
+the capacitor voltage and the capacitor is replenished. As the
+rectifier voltage falls below the capacitor voltage, the diodes stop
+conducting and the capacitor supplies the load until the next peak.
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Charging interval:} the capacitor voltage rises
+    towards the rectifier peak.
+    \item \textbf{Discharging interval:} the capacitor releases stored
+    energy into the load between peaks.
+    \item \textbf{Ripple:} the repeated charge/discharge cycle creates
+    a small periodic variation superimposed on the DC level.
+    \item \textbf{Larger capacitance:} for the same load current and
+    ripple frequency, a larger capacitor generally reduces the
+    voltage drop between peaks.
+\end{itemize}
+
+\textbf{Contemporary analogy.} The capacitor behaves like a small
+water tank placed after an intermittent pump. The rectifier refills
+the tank at each pulse; the load draws water continuously. A larger
+tank reduces the change in water level between refills. The analogy
+describes energy buffering, not a literal equivalence between
+voltage and water pressure.
+
+For a resistive load $R_L$, the ideal discharge between charging
+peaks is described by
+\begin{equation}
+    \boxed{v_C(t)=V_{\max}
+    e^{-(t-t_0)/(R_LC)}.}
+    \label{eq:cap-discharge}
+\end{equation}
+The associated time constant is
+\begin{equation}
+    \boxed{\tau=R_LC.}
+    \label{eq:rc-time}
+\end{equation}
+A larger $\tau$ means the capacitor voltage decays more slowly
+during the interval between rectifier peaks.
+
+For a full-wave rectifier and relatively small ripple, the
+peak-to-peak ripple can be estimated by
+\begin{equation}
+    \boxed{V_{r(pp)}\approx\frac{I_L}{f_rC}.}
+    \label{eq:ripple-estimate}
+\end{equation}
+For $f_r=100\,\mathrm{Hz}$ and $C=2200\,\mu\mathrm{F}$:
+\begin{align}
+    V_{r(pp)}
+    &\approx \frac{I_L}{100(2200\times10^{-6})}\\
+    &\approx 4.545 I_L\ \mathrm{V},
+\end{align}
+where $I_L$ is expressed in amperes. The approximate average
+capacitor voltage is
+\begin{equation}
+    \boxed{V_{\mathrm{DC}}\approx
+    V_{\max}-\frac{V_{r(pp)}}{2}.}
+    \label{eq:cap-average}
+\end{equation}
+With $V_{\max}\approx13.49\,\mathrm{V}$, this becomes
+\begin{equation}
+    V_{\mathrm{DC}}\approx13.49-2.273I_L\ \mathrm{V}.
+\end{equation}
+This is an estimate, not a measured output. It assumes small ripple
+and nearly constant load current. The load current, capacitor
+tolerance, equivalent series resistance (ESR), transformer
+impedance, diode conduction interval, and temperature all affect
+the actual ripple.
+
+The reference circuit report mentions a $100\,\mu\mathrm{F}$
+capacitor as its filter element and reports an approximately
+18\,V DC level in its particular simulation/measurement. The
+present main draft uses $2200\,\mu\mathrm{F}$ in its calculations.
+Those are not interchangeable experimental records. The capacitor
+value must be chosen from the intended load current and allowed
+ripple, and its voltage and ripple-current ratings must be suitable
+for the actual circuit. The reported 18\,V result belongs to the
+reference's 12\,V RMS / 18\,V peak example, not to the
+10.53\,V RMS calculation above.
+
+\textbf{Important limitation.} A reservoir capacitor does not
+produce a precision DC output. It reduces the low-frequency ripple
+but does not guarantee a fixed voltage as the load changes. It also
+does not replace the regulator, current limiting, thermal design,
+or USB source-identification circuitry.
+
+%------------------------------------------------
+\section{Regulator and Buck Converter}
+%------------------------------------------------
+The regulator stage converts the smoothed, load-dependent DC rail
+into a controlled output. The two devices considered here are
+alternatives, not stages that must be connected in series. Both
+can provide a nominal 5\,V rail, but their energy-conversion
+mechanisms and practical limitations are different.
+
+\subsection{IC 7805 linear regulator}
+The 7805 is a fixed positive linear regulator. Its internal reference
+and error amplifier monitor the output and control a series pass
+transistor. If the output tends to fall under increased load, the
+control circuit increases conduction; if the output tends to rise,
+it reduces conduction. This feedback action keeps the output near
+5\,V while the device remains within its operating and thermal
+limits.
+
+\begin{itemize}[leftmargin=1.5em]
+    \item Fixed nominal output: $V_{\mathrm{OUT}}\approx5\,\mathrm{V}$.
+    \item Requires input headroom above 5\,V; a useful first estimate
+    is $V_{\mathrm{IN}}\gtrsim V_{\mathrm{OUT}}+V_{\mathrm{dropout}}$.
+    \item The TI LM340/LM7805 family documentation gives about
+    2\,V dropout at a stated 1\,A test condition. The exact value
+    depends on device, load, and temperature.
+    \item The excess voltage is mainly dissipated as heat in the
+    pass element.
+\end{itemize}
+
+The approximate power dissipation is
+\begin{equation}
+    \boxed{P_D\approx(V_{\mathrm{IN}}-V_{\mathrm{OUT}})I_{\mathrm{OUT}}.}
+    \label{eq:7805-loss}
+\end{equation}
+For an illustrative 12\,V input, 5\,V output, and 0.5\,A load:
+\begin{equation}
+    P_D\approx(12-5)(0.5)=3.5\,\mathrm{W}.
+\end{equation}
+At 1\,A under the same voltage conditions, the estimate rises to
+7\,W. Such dissipation can make a small package very hot unless
+the thermal path is designed appropriately.
+
+\textbf{Thermal intuition.} A 7805 is like a pressure-reducing valve
+that discards the excess pressure. The output is controlled, but
+the unused voltage difference is not recovered; electrically, much
+of that difference becomes heat.
+
+A simplified junction-temperature estimate is
+\begin{equation}
+    \boxed{T_J\approx T_A+P_D R_{\theta JA},}
+    \label{eq:thermal}
+\end{equation}
+where $T_A$ is ambient temperature and $R_{\theta JA}$ is the
+effective junction-to-ambient thermal resistance of the assembled
+device. A heatsink or larger copper area can improve heat removal,
+but the actual thermal resistance depends on mounting and airflow.
+
+The 7805 family includes current limiting, thermal shutdown, and
+safe-operating-area protection. These are protective functions,
+not permission to operate continuously at the protection threshold.
+A family capability above 1.5\,A is conditional on device variant
+and thermal design; it is not a guaranteed continuous current for
+every low-cost module.
+
+\textbf{Advantages}
+\begin{itemize}[leftmargin=1.5em]
+    \item Simple circuit and straightforward fixed 5\,V output.
+    \item No switching-frequency ripple generated by the regulator.
+    \item Useful when the input-output voltage difference and load
+    current are modest.
+\end{itemize}
+\textbf{Limitations}
+\begin{itemize}[leftmargin=1.5em]
+    \item Efficiency becomes poor when the input is much higher
+    than 5\,V.
+    \item Dissipation increases with both voltage difference and
+    output current.
+    \item Input must remain above the required headroom even at
+    ripple valleys and under load.
+\end{itemize}
+
+\subsection{LM2596 buck converter}
+The LM2596 is a fixed-frequency step-down switching regulator.
+The family includes fixed-output versions and an adjustable version.
+The TI datasheet specifies a 4.5--40\,V operating input range,
+a 3\,A output-current capability under stated conditions, and a
+150\,kHz oscillator. The ratings of a complete module also depend
+on its inductor, diode, capacitors, PCB layout, and cooling.
+
+A buck converter does not continuously burn off the excess input
+voltage. Instead, an internal switch transfers energy in pulses to
+an inductor. The inductor stores energy in its magnetic field and
+continues delivering current when the switch is off. A catch diode
+provides the current path during the off interval, while the output
+capacitor reduces the resulting voltage variation.
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Switch ON:} the internal switch connects the input
+    to the inductor path; inductor current rises and energy is stored.
+    \item \textbf{Switch OFF:} the switch opens; inductor current
+    continues through the catch diode and supplies the load.
+    \item \textbf{Output filtering:} the capacitor supplies or absorbs
+    the difference between inductor current and load current.
+    \item \textbf{Feedback:} the controller senses the output and
+    adjusts switching behaviour to keep the average output near
+    the set value.
+\end{itemize}
+
+\textbf{Contemporary analogy.} The inductor acts like a flywheel:
+it resists abrupt changes in current and keeps energy moving during
+the switch-off interval. The capacitor acts like a buffer tank for
+voltage. Together they turn a train of switching pulses into a
+much steadier output.
+
+For an ideal buck converter operating in continuous-conduction
+mode, the average output is
+\begin{equation}
+    \boxed{V_{\mathrm{OUT}}=D V_{\mathrm{IN}},\qquad
+    D=\frac{V_{\mathrm{OUT}}}{V_{\mathrm{IN}}},}
+    \label{eq:buck-duty}
+\end{equation}
+where $D$ is the duty ratio. For an ideal 12\,V to 5\,V conversion:
+\begin{equation}
+    D\approx\frac{5}{12}=0.417=41.7\%.
+\end{equation}
+Real output differs because of switch and diode drops, winding
+resistance, ripple, control limits, and load conditions.
+
+The efficiency is
+\begin{equation}
+    \boxed{\eta=\frac{P_{\mathrm{OUT}}}{P_{\mathrm{IN}}}.}
+    \label{eq:efficiency}
+\end{equation}
+For illustration only, a 5\,V, 1\,A output is 5\,W. At an assumed
+85\% efficiency, the input power would be approximately
+$5/0.85=5.88$\,W and the loss approximately 0.88\,W. This is an
+example, not a guaranteed efficiency figure for every LM2596
+module.
+
+\textbf{Advantages}
+\begin{itemize}[leftmargin=1.5em]
+    \item Usually more efficient than a linear regulator for a
+    substantial step-down ratio.
+    \item Lower heat dissipation for comparable output power in
+    many operating conditions.
+    \item Fixed and adjustable output variants are available.
+\end{itemize}
+\textbf{Limitations}
+\begin{itemize}[leftmargin=1.5em]
+    \item Requires an inductor, catch diode, and suitable input and
+    output capacitors.
+    \item Switching ripple and electromagnetic interference (EMI)
+    must be considered.
+    \item The 3\,A IC rating does not mean every inexpensive module
+    can deliver 3\,A continuously.
+    \item Inductor saturation, diode current, capacitor ripple
+    rating, PCB copper, and temperature constrain usable output.
+\end{itemize}
+
+\begin{table}[!t]
+\centering
+\caption{Practical comparison of the two 5\,V regulator options}
+\label{tab:reg-comparison}
+\small
+\begin{tabular}{|p{0.25\columnwidth}|p{0.31\columnwidth}|p{0.31\columnwidth}|}
+\hline
+\textbf{Feature} & \textbf{7805} & \textbf{LM2596}\\ \hline
+Method & Linear & Switching buck\\ \hline
+Output & Fixed 5\,V & Fixed or adjustable\\ \hline
+Main loss & Voltage drop as heat & Switching and component losses\\ \hline
+External parts & Bypass capacitors; thermal path & Inductor, diode, capacitors\\ \hline
+Ripple character & No switching ripple & Switching ripple present\\ \hline
+Best fit & Small drop, modest current & Larger voltage reduction\\ \hline
+Main design check & Dissipation and headroom & Current, ripple, layout, heat\\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Selection for this project.} If the smoothed input is
+substantially above 5\,V and the USB load current is meaningful,
+the LM2596 is generally the more practical candidate because it
+avoids the large linear loss predicted by
+\eqref{eq:7805-loss}. A 7805 remains useful as a simple educational
+reference or for a low-current rail when its headroom and thermal
+conditions are verified. The regulator must be selected from the
+actual DC input range, not from the transformer's nominal label
+alone.
+
+%------------------------------------------------
+\section{USB Output Port}
+%------------------------------------------------
+A USB connector is not merely a pair of 5\,V and ground contacts.
+It is an interface with power, return, data or identification
+contacts, mechanical requirements, and rules that tell a connected
+device how much current it may draw. A regulator can hold a 5\,V
+rail, but it does not automatically make the port a compliant
+charger.
+
+\textbf{Main functions of the USB output}
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{VBUS:} carries the positive supply, nominally 5\,V
+    for the basic USB charging modes discussed here.
+    \item \textbf{GND:} provides the return path for current.
+    \item \textbf{D+ and D-:} USB 2.0 data lines; in legacy charging
+    arrangements, their electrical signature also helps a device
+    identify the source type.
+    \item \textbf{CC pins on USB Type-C:} advertise source current
+    and establish connection orientation/role information.
+    \item \textbf{USB-PD communication:} negotiates supported
+    voltage/current profiles when a suitable Power Delivery
+    controller and power path are present.
+\end{itemize}
+
+\textbf{Contemporary analogy.} VBUS is the delivery lane carrying
+energy. The identification pins are the signboard at the entrance
+that tells the device what kind of lane it has entered and what
+current allowance is available. A powerful supply without the
+correct signboard may still be treated as a lower-capability source.
+
+\textbf{Voltage is not the same as current.} The regulator establishes
+the output voltage. The connected device draws current according
+to its operating state and the source capability it detects. The
+charger must be able to maintain its voltage at that load, but it
+should not force a fixed current into every device. Current
+advertisement, current limiting, cable capability, and protection
+are separate design requirements.
+
+\textbf{Legacy USB downstream ports.}
+A Standard Downstream Port (SDP) is a normal host/data port. The
+USB 2.0 reference limit is up to 500\,mA after the applicable
+enumeration/configuration process; a USB 3.x SDP is up to 900\,mA
+under its specification. These are not blanket promises that any
+device can immediately draw those currents from any USB socket.
+Host rules and device configuration apply.
+
+\textbf{Battery Charging Specification 1.2.}
+BC1.2 distinguishes three common port types:
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{SDP (Standard Downstream Port):} supports USB data
+    and follows the applicable USB host current rules.
+    \item \textbf{CDP (Charging Downstream Port):} supports data and
+    provides charging capability, with up to 1.5\,A under the
+    standard's conditions.
+    \item \textbf{DCP (Dedicated Charging Port):} intended for
+    charging rather than USB data; the D+ and D- lines have the
+    BC1.2 DCP signature, commonly implemented as a short between
+    the two lines. A compatible device can identify the port and
+    draw up to 1.5\,A within the specification.
+\end{itemize}
+A device must perform the relevant detection. Merely shorting pins
+or applying a voltage without following the applicable standard
+does not make a universal or compliant charging port.
+
+\begin{table}[!t]
+\centering
+\caption{Common USB charging port categories}
+\label{tab:usb-port-types}
+\small
+\begin{tabular}{|p{0.22\columnwidth}|p{0.35\columnwidth}|p{0.28\columnwidth}|}
+\hline
+\textbf{Port type} & \textbf{Data support} & \textbf{Reference current}\\ \hline
+USB 2.0 SDP & Yes & Up to 500\,mA*\\ \hline
+USB 3.x SDP & Yes & Up to 900\,mA*\\ \hline
+BC1.2 CDP & Yes & Up to 1.5\,A\\ \hline
+BC1.2 DCP & No data function & Up to 1.5\,A\\ \hline
+\end{tabular}
+\end{table}
+\smallskip
+\noindent\textit{*Host enumeration and configuration rules apply.}
+
+\textbf{Legacy proprietary D+/D- signatures.}
+Some older charging ecosystems used voltage levels on D+ and D-
+to identify a source's current capability. The main draft's
+reference table records example Apple-style signatures. These
+values are legacy, proprietary arrangements and should not be
+treated as universal USB rules.
+
+\begin{table}[!t]
+\centering
+\caption{Legacy D+/D- voltage signatures recorded in the reference}
+\label{tab:legacy-usb}
+\small
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{D+} & \textbf{D-} & \textbf{Reported current}\\ \hline
+2.0\,V & 2.0\,V & Approx. 0.5\,A\\ \hline
+2.0\,V & 2.7\,V & Approx. 1.0\,A\\ \hline
+2.7\,V & 2.0\,V & Approx. 2.1\,A\\ \hline
+2.7\,V & 2.7\,V & Approx. 2.4\,A\\ \hline
+\end{tabular}
+\end{table}
+These are included to explain why older devices sometimes used
+different charging signatures. They are not a recommended
+implementation for a new universal charger. Device support varies,
+and the applicable source documentation must be checked.
+
+\textbf{USB Type-C current advertisement.}
+Type-C uses Configuration Channel (CC) pins rather than relying
+only on the legacy D+/D- signatures. A compliant 5\,V Type-C source
+can advertise default USB current, 1.5\,A, or 3\,A through the
+appropriate CC termination. The connected device reads that
+advertisement and draws only within the advertised capability.
+The cable and complete power path must also be rated for the
+current.
+
+\textbf{USB Power Delivery (USB-PD).}
+USB-PD is a separate communication protocol. It allows a source
+and sink to negotiate supported voltage and current profiles.
+A USB-C connector connected to a fixed 5\,V regulator does not
+automatically provide USB-PD. A suitable PD controller, compliant
+power-path design, cable, and negotiation process are required
+for higher-voltage profiles.
+
+\begin{table}[!t]
+\centering
+\caption{What the regulator does and what the USB interface must do}
+\label{tab:usb-responsibility}
+\small
+\begin{tabular}{|p{0.43\columnwidth}|p{0.43\columnwidth}|}
+\hline
+\textbf{Regulator / power path} & \textbf{USB interface}\\ \hline
+Maintain the selected DC voltage & Identify the port type\\ \hline
+Supply the required load current & Advertise or negotiate allowed current\\ \hline
+Remain within thermal limits & Use suitable connector and cable\\ \hline
+Provide appropriate electrical protection & Respect USB protocol requirements\\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Output protection and verification.}
+A practical low-voltage USB output needs a correctly rated current
+limit, short-circuit protection, overvoltage protection where
+appropriate, reverse-current considerations, suitable connector
+and cable ratings, and a stable output under load. The regulator's
+headline current rating alone does not establish the safe current
+capability of the complete port. Verification should use an
+appropriate electronic load and measurement equipment on an
+isolated low-voltage output; no USB output should be tested while
+the upstream mains side is exposed.
+
+%------------------------------------------------
+\section{Engineering Review and Design Checklist}
+%------------------------------------------------
+The preceding analysis shows that each stage has a distinct
+requirement. A correct calculation at one stage does not prove that
+the complete charger is suitable. The values must be checked as a
+connected system under realistic load and temperature conditions.
+
+\begin{enumerate}[leftmargin=1.6em]
+    \item \textbf{Input definition:} record the actual secondary RMS
+    voltage and frequency under the intended load. Do not mix the
+    measured 10.53\,V value with the separate 12--0--12\,V reference
+    example.
+    \item \textbf{Rectifier:} verify the bridge current and reverse
+    voltage ratings, surge capability, diode losses, and temperature.
+    \item \textbf{Capacitor:} select capacitance from load current
+    and allowable ripple; check voltage rating, polarity, ESR, and
+    ripple-current rating.
+    \item \textbf{Regulator:} check the minimum input at ripple
+    valleys, maximum input at peaks, output current, efficiency,
+    dissipation, and thermal behaviour.
+    \item \textbf{USB port:} choose one supported charging standard
+    and implement its identification/advertisement correctly.
+    \item \textbf{System verification:} check output voltage, ripple,
+    temperature, and protection behaviour at no load and at the
+    intended low-voltage test loads.
+\end{enumerate}
+
+\textbf{Source-data reconciliation.}
+The reference circuit report describes a centre-tapped 12--0--12\,V
+transformer, a 100\,$\mu$F filter capacitor, and an approximately
+18\,V peak/filtered level in its reported setup. The input-stage
+summary supplied with this project instead uses a measured
+10.53\,V RMS secondary, calculates 14.89\,V peak before the bridge,
+and 13.49\,V peak after two diode drops. The main source file
+specifies 2200\,$\mu$F. These are different data sets. This draft
+retains the 10.53\,V measured case and 2200\,$\mu$F as the main
+calculation, while explicitly identifying the 12--0--12\,V / 100
+$\mu$F values as reference-report data requiring confirmation.
+
+The reference circuit's reported waveform labels also call the
+rectifier waveform a 12\,V, 50\,Hz rectified sinusoid in one place,
+while the results list an 18\,V peak after transformer and
+rectifier. A full-wave bridge supplied at 50\,Hz produces a
+100\,Hz ripple waveform. The 12\,V and 18\,V descriptions are
+therefore not sufficient by themselves to establish a consistent
+measured waveform. The calculation in this report uses the explicit
+RMS/peak equations and labels the resulting ripple frequency
+correctly.
+
+\section*{References}
+%------------------------------------------------
+\begin{enumerate}[leftmargin=1.5em]
+    \item Texas Instruments, \emph{LM340/LM7805 Family Datasheet},
+    Wide VIN 1.5-A Fixed Voltage Regulators, Rev. L.
+    \url{https://www.ti.com/lit/ds/symlink/lm7800.pdf}
+    \item Texas Instruments, \emph{LM2596 SIMPLE SWITCHER 150-kHz
+    3-A Step-Down Voltage Regulator}, Datasheet, Rev. G.
+    \url{https://www.ti.com/lit/ds/symlink/lm2596.pdf}
+    \item USB Implementers Forum, \emph{USB 2.0 Specification}
+    and compliance documentation.
+    \url{https://www.usb.org/document-library/usb-20-specification}
+    \item Microchip Technology, \emph{Battery Charging with USB:
+    SDP, CDP and DCP Overview}.
+    \url{https://developerhelp.microchip.com/xwiki/bin/view/applications/usb/power-delivery/battery-charging/}
+    \item USB Battery Charging Specification 1.2.
+    \url{https://www.usb.org/document-library/usb-20-specification}
+\end{enumerate}
+
+\end{document}
+
