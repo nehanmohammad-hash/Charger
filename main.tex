@@ -17,6 +17,9 @@
 \usepackage{multirow}
 \usepackage{enumitem}
 \usepackage{listings}
+\usepackage[section]{placeins}
+\usepackage{needspace}
+\usepackage{float}
 
 \let\vec\mathbf
 \DeclareMathOperator*{\Res}{Res}
@@ -87,7 +90,7 @@
 
 \begin{document}
 
-\title{Fourier Series}
+\title{Fourier Analysis and Regulated DC Power Supply}
 \author{G V V Sharma$^{*}$
 \thanks{$^{*}$The author is with the Department of Electrical Engineering,
 Indian Institute of Technology Hyderabad, 502285, India.
@@ -96,32 +99,29 @@ under GNU GPL. Free to use for anything.}}
 \maketitle
 
 \begin{abstract}
-This manual provides a simple introduction to Fourier Series.
-The final section records the measured output values from the USB
-power-supply experiment.
+This document introduces periodic signals, Fourier series, and Fourier transforms, and applies these concepts to filtering. It also presents the design considerations and measured results for a regulated DC power-supply and USB output circuit.
 \end{abstract}
 
 \section{Periodic Function}
 \begin{enumerate}[label=\thesection.\arabic*.,ref=\thesection.\theenumi]
-\numberwithin{equation}{enumi}
-\numberwithin{figure}{enumi}
-\item The unit step function is
+\item Consider the full-wave-rectified sinusoidal signal
 
-Let
 \begin{align}
-    x(t) &= A_0\abs{\sin\brak{2\pi f_0 t}}
+    x(t) &= A_0\abs{\sin\brak{2\pi f_0 t}},
     \label{eq:10-orig-diff-def}
 \end{align}
+where $A_0$ is the peak amplitude and $f_0$ is the frequency of the underlying sinusoid. The absolute value makes the signal repeat twice per cycle of the underlying sinusoid.
 
 \begin{enumerate}[label=\thesection.\arabic*,
                   ref=\thesection.\theenumi]
     \item Plot $x(t)$.
-    \item Show that $x(t)$ is periodic and find its period.
+    \item Show that $x(t)$ is periodic and find its period. In particular, distinguish the period of $x(t)$ from the period of the underlying sinusoid.
 \end{enumerate}
 \end{enumerate}
 
+\FloatBarrier
 \section{Fourier Series}
-Consider $A_0=12$ and $f_0=50$ for all numerical calculations.
+Consider $A_0=12\,\mathrm{V}$ and $f_0=50\,\mathrm{Hz}$ for all numerical calculations. The rectified signal has fundamental frequency $2f_0=100\,\mathrm{Hz}$.
 \begin{enumerate}[label=\thesection.\arabic*,
                   ref=\thesection.\theenumi]
     \item If
@@ -136,32 +136,46 @@ Consider $A_0=12$ and $f_0=50$ for all numerical calculations.
         \label{eq:one-Z}
     \end{align}
 
-    \item Find $c_k$ for \eqref{eq:10-orig-diff-def}.
+    \item Find $c_k$ for \eqref{eq:10-orig-diff-def}. In particular, account for the fact that the signal has period $1/(2f_0)$, although the complex series is written using the underlying frequency $f_0$.
 
     \item Verify \eqref{eq:10-orig-diff-def} using Python.
 
     \item Show that
     \begin{align}
-        x(t) &= \sum_{k=0}^{\infty}
+        x(t) &= \frac{a_0}{2}+\sum_{k=1}^{\infty}
         \left(a_k\cos(2\pi kf_0t)+b_k\sin(2\pi kf_0t)\right)
         \label{eq:one-Z-real}
     \end{align}
-    and obtain the formulae for $a_k$ and $b_k$.
+    and obtain the coefficients
+    \begin{align*}
+        a_0 &= 2f_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}x(t)\,dt,\\
+        a_k &= 2f_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+        x(t)\cos(2\pi kf_0t)\,dt,\\
+        b_k &= 2f_0\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
+        x(t)\sin(2\pi kf_0t)\,dt,\quad k\\geq 1.
+    \end{align*}
 
-    \item Find $a_k$ and $b_k$ for \eqref{eq:10-orig-diff-def}.
+    \item Find $a_k$ and $b_k$ for \eqref{eq:10-orig-diff-def}. Use the same coefficient convention as in the real Fourier series above.
 
     \item Verify \eqref{eq:one-Z-real} using Python.
 \end{enumerate}
 
+For this signal, the coefficients provide a useful consistency check:
+$b_k=0$ for every $k$, $a_0/2=2A_0/\pi$, and
+$a_{2n}=-4A_0/[\pi(4n^2-1)]$ for $n\geq1$, while $a_k=0$
+for odd $k$. Equivalently, $c_0=2A_0/\pi$,
+$c_{2n}=c_{-2n}=-2A_0/[\pi(4n^2-1)]$, and all odd-indexed
+complex coefficients vanish.
+
+\FloatBarrier
 \section{Fourier Transform}
 \begin{enumerate}[label=\thesection.\arabic*,
                   ref=\thesection.\theenumi]
-\numberwithin{equation}{enumi}
-\numberwithin{figure}{enumi}
-    \item
+    \item The Dirac delta is a generalized function characterized by
     \begin{align}
-        \delta(t)&=0,\quad t\neq 0\\
-        \int_{-\infty}^{\infty}\delta(t)\,dt&=1
+        \delta(t)&=0,\quad t\neq 0,\\
+        \int_{-\infty}^{\infty}\delta(t)\,dt&=1,\\
+        \int_{-\infty}^{\infty}g(t)\delta(t-t_0)\,dt&=g(t_0).
     \end{align}
 
     \item The Fourier Transform of $g(t)$ is
@@ -179,54 +193,62 @@ Consider $A_0=12$ and $f_0=50$ for all numerical calculations.
         G(t)&\system{F}g(-f).
     \end{align}
 
-    \item $\delta(t)\system{F}\ ?$
+    \item Determine the Fourier transform of $\delta(t)$, treating it as a generalized function (distribution).
 
-    \item $e^{-j2\pi f_0t}\system{F}\ ?$
+    \item Determine the Fourier transform of $e^{-j2\pi f_0t}$.
 
-    \item $\cos(2\pi f_0t)\system{F}\ ?$
+    \item Determine the Fourier transform of $\cos(2\pi f_0t)$.
 
-    \item Find the Fourier Transform of $x(t)$ and plot it.
-    Verify using Python.
+    \item Find the Fourier transform of the periodic signal $x(t)$ and plot its line spectrum.
+    Use the distributional Fourier-transform convention and verify the result using Python.
 
-    \item Show that
+    \item Using the normalized definitions
+    $\rect{t}=1$ for $|t|<1/2$ and 
+    $\sinc{t}=\sin(\pi t)/(\pi t)$, show that
     \begin{align}
-        \rect{t}\system{F}\sinc{t}.
+        \rect{t}\system{F}\sinc{f}.
     \end{align}
     Verify using Python.
 
-    \item $\sinc{t}\system{F}\ ?$.
+    \item Determine the Fourier transform of $\sinc{t}$ using the same normalized convention.
     Verify using Python.
 \end{enumerate}
 
+\FloatBarrier
 \section{Filter}
 \begin{enumerate}[label=\thesection.\arabic*,
                   ref=\thesection.\theenumi]
-\numberwithin{equation}{enumi}
-\numberwithin{figure}{enumi}
-    \item Find $H(f)$ which transforms $x(t)$ to DC 5 V.
-    \item Find $h(t)$.
+    \item Determine the required DC gain and the harmonic-rejection condition on $H(f)$ so that the steady-state output is a constant $5\,\mathrm{V}$. State any assumptions about the filter passband.
+    \item For an ideal low-pass model with cutoff $f_c$ satisfying $0<f_c<100\,\mathrm{Hz}$, find the corresponding impulse response $h(t)$.
     \item Verify your result using convolution.
 \end{enumerate}
 
+The average value of the input is $X_{\mathrm{DC}}=2A_0/\pi$.
+For $A_0=12\,\mathrm{V}$, the required DC gain is therefore
+$K=5/(24/\pi)=5\pi/24\approx0.6545$. An ideal low-pass response
+with $H(f)=K$ for $|f|<f_c$ and $H(f)=0$ for $|f|>f_c$, where
+$0<f_c<100\,\mathrm{Hz}$, passes the DC component and rejects the
+first and all higher harmonics. With the normalized sinc definition,
+its impulse response is $h(t)=2Kf_c\sinc{(2f_ct)}$.
+
+\FloatBarrier
 \section{Filter Design}
 \begin{enumerate}[label=\thesection.\arabic*,
                   ref=\thesection.\theenumi]
-\numberwithin{equation}{enumi}
-\numberwithin{figure}{enumi}
-    \item Design a Butterworth filter for $H(f)$.
-    \item Design a Chebyshev filter for $H(f)$.
+    \item Design a Butterworth approximation to the specified low-pass response $H(f)$. State the filter order, cutoff frequency, and any design tolerance used.
+    \item Design a Chebyshev approximation to the specified low-pass response $H(f)$. State the filter order, passband ripple, and cutoff frequency.
     \item Design a circuit for your Butterworth filter.
     \item Design a circuit for your Chebyshev filter.
 \end{enumerate}
 
 
+\FloatBarrier
 \section{Circuit Input and Transformer}
-The circuit calculations in the earlier draft use a nominal primary
-supply of $220\,\mathrm{V}$ RMS at $50\,\mathrm{Hz}$ and a measured
+The circuit considered here uses a nominal primary supply of $220\,\mathrm{V}$ RMS at $50\,\mathrm{Hz}$ and a measured
 secondary voltage of $10.53\,\mathrm{V}$ RMS. The transformer reduces
 the AC voltage and provides galvanic isolation.
 
-\begin{table}[!t]
+\begin{table}[H]
 \centering
 \caption{Input and transformer values}
 \label{tab:transformer-values}
@@ -245,32 +267,35 @@ Approximate turns ratio & $20.9:1$\\
 \end{table}
 
 For a sinusoidal waveform, the peak voltage is $\sqrt{2}$ times
-the RMS voltage. The ideal transformer voltage ratio is equal to
-its turns ratio. The values above are the values used in the
-previous draft.
+the RMS voltage. The ideal transformer voltage ratio equals its turns ratio. These values define the transformer operating point used in the calculations below.
 
-The reference circuit document separately describes a
+A separate centre-tapped transformer configuration is also considered. It uses a
 $12$--$0$--$12\,\mathrm{V}$ centre-tapped transformer, a
 $12\,\mathrm{V}$ RMS winding output, and an approximately
-$18\,\mathrm{V}$ peak level. These reference values are not the
-same measurement as the $10.53\,\mathrm{V}$ RMS secondary used
-for the calculations above.
+$18\,\mathrm{V}$ peak level. This is a separate transformer configuration, not the
+$10.53\,\mathrm{V}$ RMS secondary used for the calculations above.
 
+\FloatBarrier
 \section{Full-Wave Bridge Rectifier}
 The bridge rectifier uses four diodes. Two diodes conduct during
 each half-cycle, so the current through the load remains in the
 same direction. The rectified waveform has twice the input
 frequency.
 
-For the previous draft's first-order calculation, the forward
+For a first-order bridge-rectifier calculation, the forward
 drop of each conducting silicon diode is taken as
-$0.7\,\mathrm{V}$. The calculated bridge peak is
-$13.49\,\mathrm{V}$; the average and RMS values of the idealised
-rectified waveform are $8.59\,\mathrm{V}$ and $9.54\,\mathrm{V}$.
+$0.7\,\mathrm{V}$. Since two diodes conduct in each half-cycle,
+the approximate output peak is $14.89-2(0.7)=13.49\,\mathrm{V}$.
+Approximating the resulting waveform as a full-wave-rectified
+sinusoid with this peak gives an average value of
+$2(13.49)/\pi=8.59\,\mathrm{V}$ and an RMS value of
+$13.49/\sqrt{2}=9.54\,\mathrm{V}$. These average and RMS values
+are first-order approximations; the exact waveform is affected by
+the diode conduction threshold and source impedance.
 
-\begin{table}[!t]
+\begin{table}[H]
 \centering
-\caption{Bridge rectifier values from the previous draft}
+\caption{Bridge rectifier values}
 \label{tab:bridge-values}
 \small
 \begin{tabular}{|p{0.55\columnwidth}|c|}
@@ -289,19 +314,18 @@ Ripple period & $10\,\mathrm{ms}$\\
 \end{tabular}
 \end{table}
 
-The earlier component comparison listed the 1N4007 diode
+Two commonly used rectifier diodes are the 1N4007 diode
 ($1\,\mathrm{A}$ average forward-current class and
 $1000\,\mathrm{V}$ repetitive peak reverse-voltage rating) and
 the 1N5408 diode ($3\,\mathrm{A}$ average forward-current class).
 
+\FloatBarrier
 \section{Smoothing Capacitor}
 The smoothing capacitor charges near the peaks of the rectified
 waveform and supplies the load between peaks. This reduces the
 voltage variation at the rectifier output.
 
-The previous draft uses a $2200\,\mu\mathrm{F}$ capacitor for its
-main ripple calculation. For a full-wave rectifier, the approximate
-peak-to-peak ripple relation used was
+The ripple calculation below uses a $2200\,\mu\mathrm{F}$ capacitor. For a full-wave rectifier with approximately constant load current and small ripple, the peak-to-peak ripple is approximated by
 \[
 V_{r(pp)}\approx\frac{I_L}{f_rC}.
 \]
@@ -314,43 +338,40 @@ $13.49\,\mathrm{V}$, the corresponding approximate average is
 \[
 V_{\mathrm{DC}}\approx13.49-2.273I_L\ \mathrm{V}.
 \]
-These are the previous draft's calculated relations, not additional
-measurements.
+These expressions are analytical estimates and are not additional measurements.
 
-The separate reference circuit document lists a
-$100\,\mu\mathrm{F}$ filter capacitor and reports an approximately
-$18\,\mathrm{V}$ DC level for its own $12\,\mathrm{V}$ RMS /
-approximately $18\,\mathrm{V}$ peak example. The $100\,\mu\mathrm{F}$
-and $2200\,\mu\mathrm{F}$ values belong to different records and
-are kept separate here.
+For the separate centre-tapped transformer configuration, a
+$100\,\mu\mathrm{F}$ filter capacitor is specified, together with an
+approximately $18\,\mathrm{V}$ DC level for the $12\,\mathrm{V}$ RMS /
+approximately $18\,\mathrm{V}$ peak example. The $100\,\mu\mathrm{F}$ and $2200\,\mu\mathrm{F}$ values apply to
+different transformer and rectifier configurations and are therefore
+presented separately.
 
+\FloatBarrier
+\Needspace{8\baselineskip}
 \section{Regulator and Buck Converter}
-The earlier draft compared a 7805 linear regulator with an LM2596
-step-down switching regulator. These are alternative regulation
-approaches.
+Two alternative regulation approaches are considered: the 7805
+linear regulator and the LM2596 step-down switching regulator.
 
 \subsection{7805 Linear Regulator}
 The 7805 is a fixed-output linear regulator with a nominal
-$5\,\mathrm{V}$ output. The previous draft records approximately
-$2\,\mathrm{V}$ dropout at a stated $1\,\mathrm{A}$ test condition
-for the TI LM340/LM7805 family. The actual dropout depends on the
-specific device, load, and temperature.
+$5\,\mathrm{V}$ output. The TI LM340/LM7805 family documentation gives an approximately
+$2\,\mathrm{V}$ dropout figure at a stated $1\,\mathrm{A}$ test condition.
+The actual dropout depends on the specific device, load, and temperature.
 
 The regulator's approximate power dissipation is
 \[
 P_D\approx(V_{\mathrm{IN}}-V_{\mathrm{OUT}})I_{\mathrm{OUT}}.
 \]
-The 7805 family documentation also describes current limiting,
-thermal shutdown, and safe-operating-area protection. A current
-limit of approximately $2.4\,\mathrm{A}$ was noted in the earlier
-reference material as a protection figure, not as a continuous
-output-current rating. The previous draft also noted that
+The 7805 family includes current limiting,
+thermal shutdown, and safe-operating-area protection. A current-limit figure of approximately $2.4\,\mathrm{A}$ describes
+protection behavior, not a continuous output-current rating. For this regulator family,
 capabilities above $1.5\,\mathrm{A}$ depend on the device variant
 and thermal conditions.
 
 \subsection{LM2596 Buck Converter}
-The LM2596 is a switching step-down regulator. The previous draft
-records the following family specifications: input range
+The LM2596 is a switching step-down regulator. Its family
+specifications include: input range
 $4.5$--$40\,\mathrm{V}$, output-current capability up to
 $3\,\mathrm{A}$ under specified conditions, and a
 $150\,\mathrm{kHz}$ oscillator frequency. The current capability
@@ -361,12 +382,12 @@ For an ideal buck converter, the duty ratio is
 \[
 D=\frac{V_{\mathrm{OUT}}}{V_{\mathrm{IN}}}.
 \]
-The earlier draft's $12\,\mathrm{V}$ to $5\,\mathrm{V}$ example
+A $12\,\mathrm{V}$ to $5\,\mathrm{V}$ example
 corresponds to an ideal duty ratio of approximately
 $41.7\%$. This is a reference calculation, not a measured
 operating point of the reported USB output.
 
-\begin{table}[!t]
+\begin{table}[H]
 \centering
 \caption{Regulator comparison}
 \label{tab:regulator-comparison}
@@ -377,11 +398,12 @@ operating point of the reported USB output.
 Method & Linear & Switching buck\\
 Output & Fixed $5\,\mathrm{V}$ & Fixed or adjustable\\
 Main consideration & Headroom and heat & Ripple, layout, and heat\\
-Key previous-draft values & About $2\,\mathrm{V}$ dropout at stated $1\,\mathrm{A}$ test & $4.5$--$40\,\mathrm{V}$ input; up to $3\,\mathrm{A}$; $150\,\mathrm{kHz}$\\
+Key specifications & About $2\,\mathrm{V}$ dropout at stated $1\,\mathrm{A}$ test & $4.5$--$40\,\mathrm{V}$ input; up to $3\,\mathrm{A}$; $150\,\mathrm{kHz}$\\
 \hline
 \end{tabular}
 \end{table}
 
+\FloatBarrier
 \section{USB Output Port}
 The USB output includes a positive supply contact (VBUS), ground
 (GND), and interface contacts. In USB 2.0, D+ and D- carry data
@@ -391,9 +413,9 @@ available current. USB Power Delivery (USB-PD) requires a
 compatible controller and negotiation; a fixed $5\,\mathrm{V}$
 regulator alone does not provide USB-PD.
 
-\begin{table}[!t]
+\begin{table}[H]
 \centering
-\caption{USB charging current values listed in the previous draft}
+\caption{USB charging current values}
 \label{tab:usb-current-values}
 \small
 \begin{tabular}{|p{0.48\columnwidth}|c|}
@@ -407,15 +429,15 @@ USB Type-C current advertisement & $1.5\,\mathrm{A}$ or $3\,\mathrm{A}$ at $5\,\
 \hline
 \end{tabular}
 \end{table}
-\noindent\textit{*Applicable USB enumeration and configuration rules apply.}
+\noindent\textit{*These are nominal maximum current values under the applicable USB specification and configuration/enumeration conditions; they are not guaranteed by the connector alone.}
 
-The previous draft also included these legacy proprietary
-D+/D- voltage signatures. They are retained as reference values
-and are not universal USB charging rules.
+The following table gives example legacy proprietary
+D+/D- voltage signatures. These voltage combinations are
+implementation-specific and are not universal USB charging rules.
 
-\begin{table}[!t]
+\begin{table}[H]
 \centering
-\caption{Legacy D+/D- signatures recorded in the reference}
+\caption{Example legacy D+/D- charging signatures}
 \label{tab:legacy-usb-values}
 \small
 \begin{tabular}{|c|c|c|}
@@ -429,15 +451,18 @@ $2.7\,\mathrm{V}$ & $2.7\,\mathrm{V}$ & Approx. $2.4\,\mathrm{A}$\\
 \end{tabular}
 \end{table}
 
+\FloatBarrier
+\Needspace{20\baselineskip}
 \section{Measured USB Output}
 The USB output was measured using a voltmeter and an ammeter.
 The recorded average voltage was approximately
 $4.94\,\mathrm{V}$, and the recorded average current was
-approximately $0.60\,\mathrm{A}$. The instrument also displayed
-$16\,\mathrm{mAh}$; this is recorded separately because mAh is a
-charge-capacity unit, not a current unit.
+approximately $0.60\,\mathrm{A}$. The measuring instrument also displayed
+$16\,\mathrm{mAh}$. This value is recorded separately because mAh
+measures electric charge, whereas A measures current; the display
+value is not interpreted as an instantaneous current.
 
-\begin{table}[!t]
+\begin{table}[H]
 \centering
 \caption{Measured USB output values}
 \label{tab:measured-usb-output}
@@ -453,4 +478,5 @@ Additional instrument display & $16\,\mathrm{mAh}$\\
 \end{table}
 
 \end{document}
+
 
