@@ -56,6 +56,9 @@
 \providecommand{\solution}{\par\noindent\textit{Solution.}\ }
 \newcommand{\maybeimage}[1]{\IfFileExists{#1}{\includegraphics[width=\columnwidth]{#1}}{\fbox{\parbox[c][0.85in][c]{0.88\columnwidth}{\centering Figure file not included in this source package.}}}}
 
+
+\newcommand{\properimage}[1]{\IfFileExists{#1}{\includegraphics[width=0.5\columnwidth]{#1}}{\fbox{\parbox[c][0.85in][c]{0.88\columnwidth}{\centering Figure file not included in this source package.}}}}
+
 \begin{document}
 
 \theoremstyle{definition}
@@ -170,7 +173,7 @@ Let
 
 \solution The plot of $x(t)$ is shown in Fig.~\ref{fig:xt}.
 
-\begin{figure}[!htp]
+\begin{figure}[H]
     \centering
     \maybeimage{codes/q1_1_plot.png}
     \caption{Plot of $x(t)=A_0\abs{\sin(2\pi f_0t)}$.}
@@ -395,7 +398,7 @@ $c_0=2A_0/\pi$.
 with its Fourier-series reconstruction, as shown in
 Fig.~\ref{fig:ver-complex}.
 
-\begin{figure}[!ht]
+\begin{figure}[H]
     \centering
     \maybeimage{codes/2_3.png}
     \caption{Verification of the complex Fourier series.}
@@ -557,7 +560,7 @@ For $A_0=12$, these become
 with its real Fourier-series reconstruction, as shown in
 Fig.~\ref{fig:ver-real}.
 
-\begin{figure}[!ht]
+\begin{figure}[H]
     \centering
     \maybeimage{codes/2_6.png}
     \caption{Verification of the real Fourier series.}
@@ -704,14 +707,15 @@ For $A_0=12$ and $f_0=50$ Hz,
     \frac{24}{\pi(1-4m^2)}\delta(f-100m).
 \end{align}
 The Python code plots the first spectral lines and compares the
-Fourier-series reconstruction with the original signal.
+Fourier-series reconstruction with the original signal, as shown in
+Fig.~\ref{fig:fourier-spectrum-reconstruction}.
 
 
-\begin{figure}[!htp]
+\begin{figure}[H]
     \centering
     \maybeimage{codes/3_8.png}
-    \caption{Comparison with the Fourier reconstruction.}
-    \label{fig2}
+    \caption{Fourier spectrum and series reconstruction of $x(t)$.}
+    \label{fig:fourier-spectrum-reconstruction}
 \end{figure}
 
 
@@ -737,14 +741,14 @@ Therefore,
     \boxed{\rect{t}\system{F}\sinc{f}}.
 \end{align}
 The code below calculates the transform numerically and compares it
-with the sinc function.
+with the sinc function, as shown in Fig.~\ref{fig:rect-sinc-verification}.
 
 
-\begin{figure}[!htp]
+\begin{figure}[H]
     \centering
     \maybeimage{codes/3_9.png}
-    \caption{Comparison with the Fourier transform.}
-    \label{fig3}
+    \caption{Numerical verification of the transform pair for $\rect{t}$.}
+    \label{fig:rect-sinc-verification}
 \end{figure}
 
 % Q3.10
@@ -765,7 +769,8 @@ The rectangular function is even, so $\rect{-f}=\rect{f}$. Hence,
 The code below calculates the transform over a finite time interval.
 A longer interval and denser sampling give a closer numerical
 approximation. At $f=\pm\frac{1}{2}$, the transform is conventionally
-assigned the midpoint value $1/2$.
+assigned the midpoint value $1/2$. The numerical result is shown in
+Fig.~\ref{fig:fourier-sinc-verification}.
 
 \begin{figure}[H]
     \centering
@@ -824,6 +829,14 @@ discussed in the following sections.
     \item \textbf{USB interface:} the port presents the correct
     electrical and charging-identification behaviour to a device.
 \end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \properimage{images/basicCircuit.jpeg}
+    \caption{Basic circuit schematic for the charger.}
+    \label{fig:basic-charger-circuit}
+\end{figure}
 
 \subsection*{Input quantities and notation}
 We use the measured secondary voltage from the input-stage analysis
@@ -1189,6 +1202,13 @@ continues delivering current when the switch is off. A catch diode
 provides the current path during the off interval, while the output
 capacitor reduces the resulting voltage variation.
 
+
+\begin{figure}[H]
+    \centering
+    \properimage{images/modifiedCircuitSchematic.jpeg}
+    \caption{Modified circuit schematic for the charger.}
+    \label{fig:modified-charger-circuit}
+\end{figure}
 \begin{itemize}[leftmargin=1.5em]
     \item \textbf{Switch ON:} the internal switch connects the input
     to the inductor path; inductor current rises and energy is stored.
@@ -1307,6 +1327,14 @@ We think of VBUS as the path that carries power and the identification
 pins as a sign that tells a device what current the source can provide.
 Without the right signal, a device may treat a capable supply as a
 lower-current source.
+
+
+\begin{figure}[H]
+    \centering
+    \properimage{images/chargerRL.jpeg}
+    \caption{Charger model.}
+    \label{fig:charger-model}
+\end{figure}
 
 \textbf{Voltage is not the same as current.} The regulator establishes
 the output voltage. The connected device draws current according

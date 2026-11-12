@@ -20,9 +20,16 @@
 \usepackage[section]{placeins}
 \usepackage{needspace}
 \usepackage{float}
+\usepackage{graphicx}
 
 \let\vec\mathbf
 \DeclareMathOperator*{\Res}{Res}
+
+%creating image environment
+\newcommand{\image}[1]{\IfFileExists{#1}{\includegraphics[width=\columnwidth]{#1}}{\fbox{\parbox[c][0.85in][c]{0.88\columnwidth}{\centering Figure file not included in this source package.}}}}
+
+
+
 
 \renewcommand\thesection{\arabic{section}}
 \renewcommand\thesubsection{\thesection.\arabic{subsection}}
@@ -99,7 +106,7 @@ under GNU GPL. Free to use for anything.}}
 \maketitle
 
 \begin{abstract}
-This document introduces periodic signals, Fourier series, and Fourier transforms, and applies these concepts to filtering. It also presents the design considerations and measured results for a regulated DC power-supply and USB output circuit.
+In this report, we use a full-wave-rectified signal to review periodic signals, Fourier series, Fourier transforms, and filtering. We then describe the main stages of a regulated DC supply and present our measured USB output values.
 \end{abstract}
 
 \section{Periodic Function}
@@ -110,7 +117,7 @@ This document introduces periodic signals, Fourier series, and Fourier transform
     x(t) &= A_0\abs{\sin\brak{2\pi f_0 t}},
     \label{eq:10-orig-diff-def}
 \end{align}
-where $A_0$ is the peak amplitude and $f_0$ is the frequency of the underlying sinusoid. The absolute value makes the signal repeat twice per cycle of the underlying sinusoid.
+Here, $A_0$ is the peak amplitude and $f_0$ is the frequency of the original sinusoid. Taking the absolute value turns both half-cycles positive, so the signal repeats twice during each cycle of the original sinusoid.
 
 \begin{enumerate}[label=\thesection.\arabic*,
                   ref=\thesection.\theenumi]
@@ -121,7 +128,7 @@ where $A_0$ is the peak amplitude and $f_0$ is the frequency of the underlying s
 
 \FloatBarrier
 \section{Fourier Series}
-Consider $A_0=12\,\mathrm{V}$ and $f_0=50\,\mathrm{Hz}$ for all numerical calculations. The rectified signal has fundamental frequency $2f_0=100\,\mathrm{Hz}$.
+For our numerical calculations, we use $A_0=12\,\mathrm{V}$ and $f_0=50\,\mathrm{Hz}$. The rectified signal therefore has a fundamental frequency of $2f_0=100\,\mathrm{Hz}$.
 \begin{enumerate}[label=\thesection.\arabic*,
                   ref=\thesection.\theenumi]
     \item If
@@ -160,7 +167,7 @@ Consider $A_0=12\,\mathrm{V}$ and $f_0=50\,\mathrm{Hz}$ for all numerical calcul
     \item Verify \eqref{eq:one-Z-real} using Python.
 \end{enumerate}
 
-For this signal, the coefficients provide a useful consistency check:
+For this signal, we can check the coefficients using these results:
 $b_k=0$ for every $k$, $a_0/2=2A_0/\pi$, and
 $a_{2n}=-4A_0/[\pi(4n^2-1)]$ for $n\geq1$, while $a_k=0$
 for odd $k$. Equivalently, $c_0=2A_0/\pi$,
@@ -223,7 +230,7 @@ complex coefficients vanish.
     \item Verify your result using convolution.
 \end{enumerate}
 
-The average value of the input is $X_{\mathrm{DC}}=2A_0/\pi$.
+The input's average value is $X_{\mathrm{DC}}=2A_0/\pi$.
 For $A_0=12\,\mathrm{V}$, the required DC gain is therefore
 $K=5/(24/\pi)=5\pi/24\approx0.6545$. An ideal low-pass response
 with $H(f)=K$ for $|f|<f_c$ and $H(f)=0$ for $|f|>f_c$, where
@@ -244,9 +251,18 @@ its impulse response is $h(t)=2Kf_c\sinc{(2f_ct)}$.
 
 \FloatBarrier
 \section{Circuit Input and Transformer}
-The circuit considered here uses a nominal primary supply of $220\,\mathrm{V}$ RMS at $50\,\mathrm{Hz}$ and a measured
-secondary voltage of $10.53\,\mathrm{V}$ RMS. The transformer reduces
-the AC voltage and provides galvanic isolation.
+Our calculations use a $220\,\mathrm{V}$ RMS, $50\,\mathrm{Hz}$
+primary supply and the measured $10.53\,\mathrm{V}$ RMS secondary.
+The transformer steps down the voltage and provides galvanic isolation.
+
+The modified charger circuit is shown in Fig.~\ref{fig:modified-charger-circuit}.
+
+\begin{figure}[H]
+    \centering
+    \image{Project/images/modifiedCircuitSchematic.jpeg}
+    \caption{Modified circuit schematic for the charger.}
+    \label{fig:modified-charger-circuit}
+\end{figure}
 
 \begin{table}[H]
 \centering
@@ -266,32 +282,22 @@ Approximate turns ratio & $20.9:1$\\
 \end{tabular}
 \end{table}
 
-For a sinusoidal waveform, the peak voltage is $\sqrt{2}$ times
-the RMS voltage. The ideal transformer voltage ratio equals its turns ratio. These values define the transformer operating point used in the calculations below.
+We calculate peak voltage as $\sqrt{2}$ times RMS voltage. The ideal
+transformer voltage ratio also gives the turns ratio.
 
-A separate centre-tapped transformer configuration is also considered. It uses a
-$12$--$0$--$12\,\mathrm{V}$ centre-tapped transformer, a
-$12\,\mathrm{V}$ RMS winding output, and an approximately
-$18\,\mathrm{V}$ peak level. This is a separate transformer configuration, not the
-$10.53\,\mathrm{V}$ RMS secondary used for the calculations above.
+The separate centre-tapped example uses a $12$--$0$--$12\,\mathrm{V}$
+transformer, a $12\,\mathrm{V}$ RMS winding output, and an
+approximately $18\,\mathrm{V}$ peak. These values do not apply to the
+$10.53\,\mathrm{V}$ RMS secondary used above.
 
 \FloatBarrier
 \section{Full-Wave Bridge Rectifier}
-The bridge rectifier uses four diodes. Two diodes conduct during
-each half-cycle, so the current through the load remains in the
-same direction. The rectified waveform has twice the input
-frequency.
-
-For a first-order bridge-rectifier calculation, the forward
-drop of each conducting silicon diode is taken as
-$0.7\,\mathrm{V}$. Since two diodes conduct in each half-cycle,
-the approximate output peak is $14.89-2(0.7)=13.49\,\mathrm{V}$.
-Approximating the resulting waveform as a full-wave-rectified
-sinusoid with this peak gives an average value of
-$2(13.49)/\pi=8.59\,\mathrm{V}$ and an RMS value of
-$13.49/\sqrt{2}=9.54\,\mathrm{V}$. These average and RMS values
-are first-order approximations; the exact waveform is affected by
-the diode conduction threshold and source impedance.
+In our four-diode bridge, two diodes conduct during each half-cycle,
+keeping current through the load in one direction and doubling the
+ripple frequency. Using a $0.7\,\mathrm{V}$ drop per diode, we
+calculate a $13.49\,\mathrm{V}$ peak, $8.59\,\mathrm{V}$ average,
+and $9.54\,\mathrm{V}$ RMS. These are first-order estimates; diode
+conduction and source impedance affect the actual waveform.
 
 \begin{table}[H]
 \centering
@@ -314,78 +320,70 @@ Ripple period & $10\,\mathrm{ms}$\\
 \end{tabular}
 \end{table}
 
-Two commonly used rectifier diodes are the 1N4007 diode
+Two rectifier diode options are the 1N4007 diode
 ($1\,\mathrm{A}$ average forward-current class and
 $1000\,\mathrm{V}$ repetitive peak reverse-voltage rating) and
 the 1N5408 diode ($3\,\mathrm{A}$ average forward-current class).
 
 \FloatBarrier
 \section{Smoothing Capacitor}
-The smoothing capacitor charges near the peaks of the rectified
-waveform and supplies the load between peaks. This reduces the
-voltage variation at the rectifier output.
+The $2200\,\mu\mathrm{F}$ smoothing capacitor charges near each
+rectified peak and supplies the load between peaks, reducing output
+ripple.
 
-The ripple calculation below uses a $2200\,\mu\mathrm{F}$ capacitor. For a full-wave rectifier with approximately constant load current and small ripple, the peak-to-peak ripple is approximated by
+For small ripple and nearly constant load current, we estimate
+peak-to-peak ripple as
 \[
 V_{r(pp)}\approx\frac{I_L}{f_rC}.
 \]
-At $f_r=100\,\mathrm{Hz}$ and $C=2200\,\mu\mathrm{F}$, this gives
+At $f_r=100\,\mathrm{Hz}$ and $C=2200\,\mu\mathrm{F}$:
 \[
 V_{r(pp)}\approx4.545 I_L\ \mathrm{V},
 \]
-where $I_L$ is in amperes. Using the calculated peak of
-$13.49\,\mathrm{V}$, the corresponding approximate average is
+where $I_L$ is in amperes. For a $13.49\,\mathrm{V}$ peak, the
+approximate average is
 \[
 V_{\mathrm{DC}}\approx13.49-2.273I_L\ \mathrm{V}.
 \]
-These expressions are analytical estimates and are not additional measurements.
+These are calculated estimates, not measured values.
 
-For the separate centre-tapped transformer configuration, a
-$100\,\mu\mathrm{F}$ filter capacitor is specified, together with an
-approximately $18\,\mathrm{V}$ DC level for the $12\,\mathrm{V}$ RMS /
-approximately $18\,\mathrm{V}$ peak example. The $100\,\mu\mathrm{F}$ and $2200\,\mu\mathrm{F}$ values apply to
-different transformer and rectifier configurations and are therefore
-presented separately.
+The separate centre-tapped example specifies a $100\,\mu\mathrm{F}$
+filter capacitor and an approximately $18\,\mathrm{V}$ DC level.
+This differs from the $2200\,\mu\mathrm{F}$ calculation above.
 
 \FloatBarrier
 \Needspace{8\baselineskip}
 \section{Regulator and Buck Converter}
-Two alternative regulation approaches are considered: the 7805
-linear regulator and the LM2596 step-down switching regulator.
+We compare two 5 V regulator options: the 7805 linear regulator and
+the LM2596 step-down converter.
 
 \subsection{7805 Linear Regulator}
-The 7805 is a fixed-output linear regulator with a nominal
-$5\,\mathrm{V}$ output. The TI LM340/LM7805 family documentation gives an approximately
-$2\,\mathrm{V}$ dropout figure at a stated $1\,\mathrm{A}$ test condition.
-The actual dropout depends on the specific device, load, and temperature.
+The 7805 provides a fixed $5\,\mathrm{V}$ output. TI lists about
+$2\,\mathrm{V}$ dropout at a $1\,\mathrm{A}$ test condition; the
+actual value depends on the device, load, and temperature.
 
-The regulator's approximate power dissipation is
+Its approximate power dissipation is
 \[
 P_D\approx(V_{\mathrm{IN}}-V_{\mathrm{OUT}})I_{\mathrm{OUT}}.
 \]
-The 7805 family includes current limiting,
-thermal shutdown, and safe-operating-area protection. A current-limit figure of approximately $2.4\,\mathrm{A}$ describes
-protection behavior, not a continuous output-current rating. For this regulator family,
-capabilities above $1.5\,\mathrm{A}$ depend on the device variant
-and thermal conditions.
+The 7805 family has current limiting and thermal protection. Its
+approximately $2.4\,\mathrm{A}$ current-limit figure is not a
+continuous rating; operation above $1.5\,\mathrm{A}$ depends on the
+device and cooling.
 
 \subsection{LM2596 Buck Converter}
-The LM2596 is a switching step-down regulator. Its family
-specifications include: input range
-$4.5$--$40\,\mathrm{V}$, output-current capability up to
-$3\,\mathrm{A}$ under specified conditions, and a
-$150\,\mathrm{kHz}$ oscillator frequency. The current capability
-of a complete module also depends on its inductor, diode,
-capacitors, circuit board, and cooling.
+The LM2596 family specifies a $4.5$--$40\,\mathrm{V}$ input range,
+up to $3\,\mathrm{A}$ output under stated conditions, and a
+$150\,\mathrm{kHz}$ oscillator. A module's usable current also
+depends on its components, board, and cooling.
 
 For an ideal buck converter, the duty ratio is
 \[
 D=\frac{V_{\mathrm{OUT}}}{V_{\mathrm{IN}}}.
 \]
-A $12\,\mathrm{V}$ to $5\,\mathrm{V}$ example
-corresponds to an ideal duty ratio of approximately
-$41.7\%$. This is a reference calculation, not a measured
-operating point of the reported USB output.
+A $12\,\mathrm{V}$ to $5\,\mathrm{V}$ conversion gives an ideal
+duty ratio of about $41.7\%$. This is a reference calculation, not
+our measured USB operating point.
 
 \begin{table}[H]
 \centering
@@ -405,13 +403,10 @@ Key specifications & About $2\,\mathrm{V}$ dropout at stated $1\,\mathrm{A}$ tes
 
 \FloatBarrier
 \section{USB Output Port}
-The USB output includes a positive supply contact (VBUS), ground
-(GND), and interface contacts. In USB 2.0, D+ and D- carry data
-and may also participate in legacy charging-source detection.
-USB Type-C uses configuration-channel (CC) pins to advertise
-available current. USB Power Delivery (USB-PD) requires a
-compatible controller and negotiation; a fixed $5\,\mathrm{V}$
-regulator alone does not provide USB-PD.
+The USB port provides power through VBUS and return through GND.
+D+ and D- carry USB 2.0 data and can identify legacy charging
+sources. Type-C advertises current through its CC pins; USB-PD also
+requires a compatible controller and negotiation.
 
 \begin{table}[H]
 \centering
@@ -431,9 +426,8 @@ USB Type-C current advertisement & $1.5\,\mathrm{A}$ or $3\,\mathrm{A}$ at $5\,\
 \end{table}
 \noindent\textit{*These are nominal maximum current values under the applicable USB specification and configuration/enumeration conditions; they are not guaranteed by the connector alone.}
 
-The following table gives example legacy proprietary
-D+/D- voltage signatures. These voltage combinations are
-implementation-specific and are not universal USB charging rules.
+The table lists legacy proprietary D+/D- signatures. They are
+implementation-specific, not universal USB rules.
 
 \begin{table}[H]
 \centering
@@ -454,13 +448,10 @@ $2.7\,\mathrm{V}$ & $2.7\,\mathrm{V}$ & Approx. $2.4\,\mathrm{A}$\\
 \FloatBarrier
 \Needspace{20\baselineskip}
 \section{Measured USB Output}
-The USB output was measured using a voltmeter and an ammeter.
-The recorded average voltage was approximately
-$4.94\,\mathrm{V}$, and the recorded average current was
-approximately $0.60\,\mathrm{A}$. The measuring instrument also displayed
-$16\,\mathrm{mAh}$. This value is recorded separately because mAh
-measures electric charge, whereas A measures current; the display
-value is not interpreted as an instantaneous current.
+We measured an average USB output of $4.94\,\mathrm{V}$ and
+$0.60\,\mathrm{A}$ using a voltmeter and ammeter. The instrument
+also displayed $16\,\mathrm{mAh}$, which we list separately because
+mAh measures charge, not current.
 
 \begin{table}[H]
 \centering
