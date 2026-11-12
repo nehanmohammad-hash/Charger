@@ -144,12 +144,9 @@
 \bigskip
 
 \begin{abstract}
-This report develops the Fourier-series and Fourier-transform analysis of a
-full-wave rectified waveform, then connects that analysis to the practical
-stages of a 5 V charger: voltage conversion, rectification, smoothing,
-regulation, and the USB output interface. Circuit explanations are expanded
-for intuitive understanding, while numerical values are distinguished from
-reference examples and unverified assumptions.
+This report studies the Fourier series and Fourier transform of a
+full-wave rectified waveform and describes the main stages of a 5 V
+charger. It also separates measured values from estimates and examples.
 \end{abstract}
 
 %------------------------------------------------
@@ -183,7 +180,7 @@ Let
 % Q1.2
 \item Show that $x(t)$ is periodic and find its period.
 
-\solution Note that,
+\solution To check periodicity, substitute $t+\frac{1}{2f_0}$ into $x(t)$:
 
 \begin{align}
     x\brak{t+\frac{1}{2f_0}}
@@ -259,8 +256,8 @@ $\left[-\frac{1}{2f_0},\frac{1}{2f_0}\right]$,
     e^{\jj2\pi(k-n)f_0t}\,dt.
 \end{align}
 
-The integral on the right can be evaluated using the
-orthogonality property of complex exponentials:
+The integral on the right follows from the orthogonality of complex
+exponentials:
 
 \begin{align}
     &\int_{-\frac{1}{2f_0}}^{\frac{1}{2f_0}}
@@ -273,10 +270,10 @@ orthogonality property of complex exponentials:
     \end{cases}
 \end{align}
 
-Note that the integration interval has length $1/f_0$.
-Although the fundamental period of the given signal
-$x(t)=A_0|\sin(2\pi f_0t)|$ is $1/(2f_0)$, the chosen
-Fourier basis $e^{\jj2\pi kf_0t}$ has period $1/f_0$. Thus, the integration interval covers two fundamental periods of the signal and one period of the Fourier basis.
+The integration interval has length $1/f_0$. The signal
+$x(t)=A_0|\sin(2\pi f_0t)|$ has period $1/(2f_0)$, while the
+Fourier basis $e^{\jj2\pi kf_0t}$ has period $1/f_0$. The interval
+therefore covers two signal periods and one period of the Fourier basis.
 
 Consequently, all terms in the summation vanish except
 the term for which $k=n$. Therefore,
@@ -589,11 +586,12 @@ with inverse transform
     \int_{-\infty}^{\infty}\delta(t)\,dt&=1.
 \end{align}
 
-\solution The Dirac delta is zero everywhere except at the origin, but its total integral is unity. More generally, it has the sifting property
+\solution The Dirac delta is zero except at the origin, and its total
+integral is one. It also has the sifting property
 \begin{align}
     \int_{-\infty}^{\infty}g(t)\delta(t-t_0)\,dt=g(t_0).
 \end{align}
-This property allows an impulse to select the value of a function at its location.
+This property gives the value of the function at the impulse location.
 
 % Q3.2
 \item State the Fourier-transform pair for $g(t)$.
@@ -685,7 +683,8 @@ By linearity and the exponential transform pairs,
 % Q3.8
 \item Find the Fourier transform of $x(t)$ and plot it. Verify using Python.
 
-\solution The signal is periodic with fundamental frequency $2f_0$. Its complex Fourier-series representation can therefore be written as
+\solution The signal has fundamental frequency $2f_0$, so its complex
+Fourier-series representation is
 \begin{align}
     x(t)=\sum_{m=-\infty}^{\infty}d_m e^{\jj2\pi(2mf_0)t},
 \end{align}
@@ -704,7 +703,8 @@ For $A_0=12$ and $f_0=50$ Hz,
     X(f)=\sum_{m=-\infty}^{\infty}
     \frac{24}{\pi(1-4m^2)}\delta(f-100m).
 \end{align}
-Python code plots the first few spectral lines and compares the analytical Fourier-series reconstruction with the original signal.
+The Python code plots the first spectral lines and compares the
+Fourier-series reconstruction with the original signal.
 
 
 \begin{figure}[!htp]
@@ -736,7 +736,8 @@ Therefore,
 \begin{align}
     \boxed{\rect{t}\system{F}\sinc{f}}.
 \end{align}
-The following code numerically evaluates the transform and compares it with the analytical sinc function.
+The code below calculates the transform numerically and compares it
+with the sinc function.
 
 
 \begin{figure}[!htp]
@@ -761,8 +762,10 @@ The rectangular function is even, so $\rect{-f}=\rect{f}$. Hence,
 \begin{align}
     \boxed{\sinc{t}\system{F}\rect{f}}.
 \end{align}
-The following code numerically evaluates the transform over a finite time interval. Increasing the integration range and sampling density improves the approximation.
-At the discontinuities $f=\pm\frac{1}{2}$, the Fourier-transform value is conventionally taken as the midpoint value $1/2$.
+The code below calculates the transform over a finite time interval.
+A longer interval and denser sampling give a closer numerical
+approximation. At $f=\pm\frac{1}{2}$, the transform is conventionally
+assigned the midpoint value $1/2$.
 
 \begin{figure}[H]
     \centering
@@ -823,9 +826,9 @@ discussed in the following sections.
 \end{itemize}
 
 \subsection*{Input quantities and notation}
-The calculations below use the measured secondary voltage from the
-input-stage analysis. This is kept distinct from the separate
-12--0--12\,V transformer example in the reference circuit report.
+We use the measured secondary voltage from the input-stage analysis
+in the calculations below. We keep it separate from the 12--0--12\,V
+transformer example in the reference circuit report.
 
 \begin{table}[!t]
 \centering
@@ -869,8 +872,7 @@ For the nominal input stated in the reference calculation,
     &=220\sqrt{2}\\
     &\approx 311.1\,\mathrm{V}.
 \end{align}
-This value is included to explain the notation and the transformer
-ratio; it is not an instruction to handle or measure mains voltage.
+We include this value to explain the notation and transformer ratio.
 
 \textbf{Intuition.} RMS voltage is similar to an average
 \emph{effectiveness} rating rather than the highest instantaneous
@@ -910,11 +912,10 @@ The transformer performs two conceptually separate functions:
     isolation transformer.
 \end{itemize}
 
-\textbf{Contemporary analogy.} A transformer is like a contactless
-gearbox for AC energy: it changes the voltage/current relationship
-through magnetic coupling, much as gears trade speed for torque.
-Unlike a simple resistor divider, it can transfer useful power
-without intentionally burning the voltage difference as heat.
+One way to picture a transformer is as a contactless gearbox for AC:
+it changes the voltage and current relationship through magnetic
+coupling. Unlike a resistor divider, it can transfer power without
+deliberately turning the voltage difference into heat.
 
 The reference main-circuit report describes a centre-tapped
 12--0--12\,V transformer and reports an approximately 12\,V RMS
@@ -941,10 +942,9 @@ the conducting path contains two forward-biased diodes.
     a full-wave rectified waveform.
 \end{itemize}
 
-\textbf{Contemporary analogy.} Think of a one-way street system:
-although the source alternates direction, the bridge routes both
-directions of travel so that traffic through the load always moves
-the same way.
+We picture the bridge as a one-way street system. The source alternates
+direction, but the bridge routes both half-cycles so current through
+the load always flows in the same direction.
 
 For a silicon bridge, a first-order estimate uses two diode drops:
 \begin{equation}
@@ -1030,12 +1030,10 @@ conducting and the capacitor supplies the load until the next peak.
     voltage drop between peaks.
 \end{itemize}
 
-\textbf{Contemporary analogy.} The capacitor behaves like a small
-water tank placed after an intermittent pump. The rectifier refills
-the tank at each pulse; the load draws water continuously. A larger
-tank reduces the change in water level between refills. The analogy
-describes energy buffering, not a literal equivalence between
-voltage and water pressure.
+We think of the capacitor as a small tank after an intermittent pump.
+The rectifier tops it up at each pulse, while the load draws from it
+between pulses. A larger capacitor reduces the voltage drop between
+those pulses.
 
 For a resistive load $R_L$, the ideal discharge between charging
 peaks is described by
@@ -1101,11 +1099,10 @@ or USB source-identification circuitry.
 %------------------------------------------------
 \section{Regulator and Buck Converter}
 %------------------------------------------------
-The regulator stage converts the smoothed, load-dependent DC rail
-into a controlled output. The two devices considered here are
-alternatives, not stages that must be connected in series. Both
-can provide a nominal 5\,V rail, but their energy-conversion
-mechanisms and practical limitations are different.
+In this section, we compare two ways to convert the smoothed DC rail
+to a controlled output. The 7805 and LM2596 are alternatives, not
+stages to connect in series. Both can provide a nominal 5\,V output,
+but they work differently and have different limitations.
 
 \subsection{IC 7805 linear regulator}
 The 7805 is a fixed positive linear regulator. Its internal reference
@@ -1140,10 +1137,8 @@ At 1\,A under the same voltage conditions, the estimate rises to
 7\,W. Such dissipation can make a small package very hot unless
 the thermal path is designed appropriately.
 
-\textbf{Thermal intuition.} A 7805 is like a pressure-reducing valve
-that discards the excess pressure. The output is controlled, but
-the unused voltage difference is not recovered; electrically, much
-of that difference becomes heat.
+We think of a 7805 as a pressure-reducing valve: it controls the
+output, while much of the unused voltage difference becomes heat.
 
 A simplified junction-temperature estimate is
 \begin{equation}
@@ -1206,11 +1201,10 @@ capacitor reduces the resulting voltage variation.
     the set value.
 \end{itemize}
 
-\textbf{Contemporary analogy.} The inductor acts like a flywheel:
-it resists abrupt changes in current and keeps energy moving during
-the switch-off interval. The capacitor acts like a buffer tank for
-voltage. Together they turn a train of switching pulses into a
-much steadier output.
+We picture the inductor as a flywheel: it resists sudden changes in
+current and keeps energy moving while the switch is off. The
+capacitor smooths the output voltage. Together, they reduce the
+variation from the switching pulses.
 
 For an ideal buck converter operating in continuous-conduction
 mode, the average output is
@@ -1275,10 +1269,9 @@ Main design check & Dissipation and headroom & Current, ripple, layout, heat\\ \
 \end{tabular}
 \end{table}
 
-\textbf{Selection for this project.} If the smoothed input is
-substantially above 5\,V and the USB load current is meaningful,
-the LM2596 is generally the more practical candidate because it
-avoids the large linear loss predicted by
+\textbf{Choice for this project.} If the smoothed input is well above
+5\,V and the USB load draws a substantial current, the LM2596 is a
+practical option because it avoids the large linear loss estimated by
 \eqref{eq:7805-loss}. A 7805 remains useful as a simple educational
 reference or for a low-current rail when its headroom and thermal
 conditions are verified. The regulator must be selected from the
@@ -1310,11 +1303,10 @@ charger.
     controller and power path are present.
 \end{itemize}
 
-\textbf{Contemporary analogy.} VBUS is the delivery lane carrying
-energy. The identification pins are the signboard at the entrance
-that tells the device what kind of lane it has entered and what
-current allowance is available. A powerful supply without the
-correct signboard may still be treated as a lower-capability source.
+We think of VBUS as the path that carries power and the identification
+pins as a sign that tells a device what current the source can provide.
+Without the right signal, a device may treat a capable supply as a
+lower-current source.
 
 \textbf{Voltage is not the same as current.} The regulator establishes
 the output voltage. The connected device draws current according
@@ -1436,6 +1428,14 @@ appropriate electronic load and measurement equipment on an
 isolated low-voltage output; no USB output should be tested while
 the upstream mains side is exposed.
 
+\subsection*{My output readings}
+During our output check, we recorded an average voltage of
+$4.94\,\mathrm{V}$. The ammeter readings averaged
+$0.60\,\mathrm{A}$. The instrument also showed $16\,\mathrm{mAh}$;
+we list this separately because mAh is a charge reading, not a current
+value. These are the readings we observed, rather than calculated
+values.
+
 %------------------------------------------------
 \section{Engineering Review and Design Checklist}
 %------------------------------------------------
@@ -1506,4 +1506,5 @@ correctly.
 \end{enumerate}
 
 \end{document}
+
 
